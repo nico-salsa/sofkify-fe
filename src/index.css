@@ -1,2 +1,11 @@
 @import "tailwindcss";
 
+@theme {
+  /* Colores personalizados */
+  --color-white: #FFFFFF;
+  --color-black: #000000;
+  --color-dark-gray: #333333;
+  --color-yellow: #FFB800;
+  --color-corporate-orange: #FF6B00;
+  --color-light-gray: #E0E0E0;
+}
