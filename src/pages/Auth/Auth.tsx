@@ -23,7 +23,7 @@ const Auth: React.FC = () => {
       setTimeout(() => {
         setIsLoading(false);
       }, 1000);
-    } catch (err) {
+    } catch {
       setError('Error al iniciar sesión');
       setIsLoading(false);
     }
@@ -45,7 +45,7 @@ const Auth: React.FC = () => {
       setTimeout(() => {
         setIsLoading(false);
       }, 1000);
-    } catch (err) {
+    } catch {
       setError('Error al registrarse');
       setIsLoading(false);
     }
