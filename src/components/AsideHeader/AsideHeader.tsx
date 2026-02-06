@@ -6,7 +6,7 @@ import type { AsideHeaderProps } from './types';
 const AsideHeader: React.FC<AsideHeaderProps> = ({ onAction }) => {
   return (
     <aside className="mt-12 p-5">
-      <Link to="/" className="w-40 block">
+      <Link to="/" className="w-40 block" onClick={onAction}>
         <img src="/softkify-logo.jpeg" alt="Logo" className="w-full h-auto object-contain" />
       </Link>
       <nav>

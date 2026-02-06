@@ -1,8 +1,7 @@
 import { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Home from './pages/Home/Home';
-import SignIn from './pages/SingIn/SignIn';
-import LogIn from './pages/LogIn/LogIn';
+import Auth from './pages/Auth/Auth';
 import Product from './pages/Product/Product';
 import Header from './components/Header/Header';
 import Cart from './pages/Cart/Cart';
@@ -10,8 +9,7 @@ import BurguerButton from './components/BurguerButton/BurguerButton';
 import AsideHeader from './components/AsideHeader/AsideHeader';
 
 const navbarItems = [
-  { href: "/log-in", label: "Log In" },
-  { href: "/sign-in", label: "Sign In" },
+  { href: "/auth", label: "Login" },
 ];
 
 const App = () => {
@@ -38,8 +36,7 @@ const App = () => {
       </aside>
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/log-in" element={<LogIn />} />
-        <Route path="/sign-in" element={<SignIn />} />
+        <Route path="/auth" element={<Auth />} />
         <Route path="/product" element={<Product />} />
         <Route path="/cart" element={<Cart items={cartItems} />} />
       </Routes>
