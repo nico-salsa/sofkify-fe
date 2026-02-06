@@ -3,13 +3,14 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Home from './pages/Home/Home';
 import Auth from './pages/Auth/Auth';
 import Product from './pages/Product/Product';
+import ProductDetail from './pages/Product/ProductDetail';
 import Header from './components/Header/Header';
 import Cart from './pages/Cart/Cart';
 import BurguerButton from './components/BurguerButton/BurguerButton';
 import AsideHeader from './components/AsideHeader/AsideHeader';
 
 const navbarItems = [
-  { href: "/auth", label: "Login" },
+  { href: "/auth", label: "Iniciar Sesión" },
 ];
 
 const App = () => {
@@ -38,6 +39,7 @@ const App = () => {
         <Route path="/" element={<Home />} />
         <Route path="/auth" element={<Auth />} />
         <Route path="/product" element={<Product />} />
+        <Route path="/product/:id" element={<ProductDetail />} />
         <Route path="/cart" element={<Cart items={cartItems} />} />
       </Routes>
     </Router>
