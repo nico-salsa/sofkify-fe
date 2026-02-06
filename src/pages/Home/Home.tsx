@@ -11,7 +11,7 @@ const Home: React.FC = () => {
       <ul className="grid grid-cols-3 gap-4">
         {products?.length > 0 ? (
           products.map((product, index) => (
-            <li key={index} className="bg-gray-200 p-4">
+            <li key={index} >
               <Product product={product} />
             </li>
           ))

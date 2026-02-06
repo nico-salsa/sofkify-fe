@@ -9,3 +9,7 @@ export interface CartItem {
   updatedAt: string;
   image: string;
 }
+
+export interface ProductProps {
+  product: CartItem;
+}
