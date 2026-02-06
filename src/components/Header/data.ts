@@ -1,17 +1,11 @@
-// Navigation links interface
-interface NavigationLinks {
-  readonly home: string;
-  readonly signIn: string;
-  readonly logIn: string;
-  readonly product: string;
-}
+import type { NavigationLinks } from "./types";
 
 // Navigation links constants
 export const links: NavigationLinks = {
-  home: '/',
   signIn: '/sign-in',
   logIn: '/log-in',
   product: '/product',
+  cart: '/cart', // Nueva ruta agregada
 } as const;
 
 // Type helper to get all route paths

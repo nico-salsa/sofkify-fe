@@ -7,10 +7,8 @@ import Header from './components/Header/Header';
 import Cart from './pages/Cart/Cart';
 
 const navbarItems = [
-  { href: "/", label: "Home" },
-  { href: "/sign-in", label: "Sign In" },
   { href: "/log-in", label: "Log In" },
-  { href: "/product", label: "Product" }
+  { href: "/sign-in", label: "Sign In" },
 ];
 
 function App() {
@@ -22,17 +20,14 @@ function App() {
 
   return (
     <Router>
-       <div> 
-       <Header navbarItems={navbarItems}/>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/sign-in" element={<SignIn />} />
-          <Route path="/log-in" element={<LogIn />} />
-          <Route path="/product/:productId" element={<Product />} />
-          <Route path="/cart" element={<Cart items={cartItems} />} />
-          <Route path="*" element={<h1>Error 404</h1>} />
+      <Header navbarItems={navbarItems} />
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/log-in" element={<LogIn />} />
+        <Route path="/sign-in" element={<SignIn />} />
+        <Route path="/product" element={<Product />} />
+        <Route path="/cart" element={<Cart items={cartItems} />} />
       </Routes>
-      </div>
     </Router>
   );
 }
