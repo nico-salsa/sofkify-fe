@@ -1,5 +1,4 @@
 export const navbarItems = [
-    { href: "/auth", label: "Log In" },
-    { href: "/product", label: "Product" },
-    { href: "/cart", label: "Cart" },
+    { href: "/auth", label: "Iniciar Sesión" },
+    { href: "/cart", label: "Carrito de compra" },
   ];

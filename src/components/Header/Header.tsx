@@ -21,7 +21,7 @@ const Header: React.FC<IHeaderProps> = ({ navbarItems }) => {
             <li key={item.href} className="h-6 mb-4" style={{ marginBottom: index < navbarItems.length - 1 ? '0.5rem' : '0' }}>
               <Link
                 to={item.href}
-                className="block h-full transition-colors duration-300 hover:text-corporate-orange"
+                className="block h-full transition-colors duration-300 hover:text-corporate-orange text-sofka-primary font-bold"
               >
                 {item.label}
               </Link>
