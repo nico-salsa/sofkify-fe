@@ -1,9 +1,15 @@
 import React from 'react';
 
 interface ICartItem {
+  id: string;
   name: string;
+  description: string;
   price: number;
-  quantity: number;
+  stock: number;
+  active: boolean;
+  createdAt: string;
+  updatedAt: string;
+  image: string;
 }
 
 interface ICartProps {
@@ -11,8 +17,8 @@ interface ICartProps {
 }
 
 const Cart: React.FC<ICartProps> = ({ items }) => {
-  const totalPrice = items.reduce((acc, item) => acc + item.price * item.quantity, 0);
-  const totalQuantity = items.reduce((acc, item) => acc + item.quantity, 0);
+  const totalPrice = items.reduce((acc, item) => acc + item.price * item.stock, 0);
+  const totalQuantity = items.reduce((acc, item) => acc + item.stock, 0);
 
   return (
     <div>
@@ -22,7 +28,7 @@ const Cart: React.FC<ICartProps> = ({ items }) => {
           <li key={item.name}>
             <span>{item.name}</span>
             <span>${item.price}</span>
-            <span>{item.quantity}</span>
+            <span>{item.stock}</span>
           </li>
         ))}
       </ul>

@@ -8,7 +8,7 @@ const Home: React.FC = () => {
   return (
     <div className="container mx-auto">
       <h1 className="text-2xl font-bold mb-4 text-center mt-2">Nuestros productos</h1>
-      <ul className="grid grid-cols-3 gap-4">
+      <ul className="grid max-sm:grid-cols-1 grid-cols-3 gap-4 w-11/12 mx-auto max-w-286 max-md:grid-cols-2">
         {products?.length > 0 ? (
           products.map((product, index) => (
             <li key={index} >
