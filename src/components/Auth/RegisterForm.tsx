@@ -63,10 +63,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onSubmit, onToggleMode, isL
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validateForm()) return;
-    await onSubmit({
-      ...formData,
-      phone: Number(formData.phone),
-    });
+    await onSubmit(formData);
   };
 
   return (

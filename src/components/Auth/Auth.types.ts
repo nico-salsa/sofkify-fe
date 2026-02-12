@@ -1,4 +1,4 @@
-import type { AuthMode } from '../../types/user.types';
+import type { AuthMode, CreateUserDTO, LoginCredentials } from '../../types/user.types';
 
 export interface AuthPageProps {
   initialMode?: AuthMode;
@@ -15,21 +15,14 @@ export interface AuthImageProps {
 }
 
 export interface LoginFormProps {
-  onSubmit: (data: { email: string; password: string }) => Promise<void>;
+  onSubmit: (data: LoginCredentials) => Promise<void>;
   onToggleMode: () => void;
   isLoading: boolean;
   error: string | null;
 }
 
 export interface RegisterFormProps {
-  onSubmit: (data: {
-    name: string;
-    lastName: string;
-    email: string;
-    password: string;
-    address: string;
-    phone: number;
-  }) => Promise<void>;
+  onSubmit: (data: CreateUserDTO) => Promise<void>;
   onToggleMode: () => void;
   isLoading: boolean;
   error: string | null;

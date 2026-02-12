@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import LoginForm from '../../components/Auth/LoginForm';
 import RegisterForm from '../../components/Auth/RegisterForm';
 import AuthImage from '../../components/Auth/AuthImage';
-import type { AuthMode } from '../../types/user.types';
+import type { AuthMode, CreateUserDTO, LoginCredentials } from '../../types/user.types';
 
 const Auth: React.FC = () => {
   const [mode, setMode] = useState<AuthMode>('login');
@@ -14,7 +14,7 @@ const Auth: React.FC = () => {
     setError(null);
   };
 
-  const handleLogin = async (data: { email: string; password: string }) => {
+  const handleLogin = async (data: LoginCredentials) => {
     setIsLoading(true);
     setError(null);
     try {
@@ -29,14 +29,7 @@ const Auth: React.FC = () => {
     }
   };
 
-  const handleRegister = async (data: {
-    name: string;
-    lastName: string;
-    email: string;
-    password: string;
-    address: string;
-    phone: number;
-  }) => {
+  const handleRegister = async (data: CreateUserDTO) => {
     setIsLoading(true);
     setError(null);
     try {
