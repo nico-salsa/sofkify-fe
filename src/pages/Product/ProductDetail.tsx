@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import useGetProducts from '../../api/useGetProducts';
-import type { CartItem } from '../../api/types';
+import type { ProductDTO } from '../../types/product';
 
 const formatCurrency = (value: number) => {
   return new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 }).format(value);
@@ -11,7 +11,7 @@ const ProductDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const products = useGetProducts();
-  const [product, setProduct] = useState<CartItem | null>(null);
+  const [product, setProduct] = useState<ProductDTO | null>(null);
   const [loading, setLoading] = useState(true);
   const [qty, setQty] = useState(1);
 

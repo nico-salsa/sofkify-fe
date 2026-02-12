@@ -1,9 +1,9 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import type { CartItem } from './types';
+import type { ProductDTO } from '../../types/product';
 
 interface ProductProps {
-  product: CartItem;
+  product: ProductDTO;
 }
 
 const Product: React.FC<ProductProps> = ({ product }) => {

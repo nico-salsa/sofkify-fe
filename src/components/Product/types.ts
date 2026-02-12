@@ -1,15 +1,5 @@
-export interface CartItem {
-  id: string;
-  name: string;
-  description: string;
-  price: number;
-  stock: number;
-  active: boolean;
-  createdAt: string;
-  updatedAt: string;
-  image: string;
-}
-
-export interface ProductProps {
-  product: CartItem;
-}
+/**
+ * @deprecated Este archivo re-exporta tipos desde src/types/product.ts
+ * Importa directamente desde src/types/product.ts en su lugar
+ */
+export type { Product, ProductPresentation, ProductProps } from '../../types/product';

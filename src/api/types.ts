@@ -1,11 +1,5 @@
-export interface CartItem {
-  id: string;
-  name: string;
-  description: string;
-  price: number;
-  stock: number;
-  active: boolean;
-  createdAt: string;
-  updatedAt: string;
-  image: string;
-}
+/**
+ *  Este archivo re-exporta tipos desde src/types/product.ts
+ * Importa directamente desde src/types/product.ts en su lugar
+ */
+export type { CartItem, Product, ProductDTO, ProductPresentation } from '../types/product';

@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
-import type { CartItem } from './types.ts';
+import type { ProductDTO } from '../types/product';
 import { cartItems } from './products';
 
 const useGetProducts = () => {
-  const [products, setProducts] = useState<CartItem[]>([]);
+  const [products, setProducts] = useState<ProductDTO[]>([]);
 
   useEffect(() => {
     const fetchProducts = async () => {

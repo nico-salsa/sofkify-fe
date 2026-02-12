@@ -1,19 +1,9 @@
 import React from 'react';
 import ProductCartItem from '../../components/ProductCartItem/ProductCartItem';
-interface ICartItem {
-  id: string;
-  name: string;
-  description: string;
-  price: number;
-  stock: number;
-  active: boolean;
-  createdAt: string;
-  updatedAt: string;
-  image: string;
-}
+import type { CartItem } from '../../types/product';
 
 interface ICartProps {
-  items: ICartItem[];
+  items: CartItem[];
 }
 
 const product = {

@@ -1,6 +1,7 @@
-import type { CartItem } from './types';
+import type { ProductDTO } from '../types/product';
 
-const cartItems: CartItem[] = [
+// Mock data de productos (simulando respuesta de API)
+const cartItems: ProductDTO[] = [
   { id: '1', name: 'Product 1', description: 'Description 1', price: 10, stock: 2, active: true, createdAt: '2022-01-01T00:00:00Z', updatedAt: '2022-01-01T00:00:00Z', image: '/sofkify_generic_product.png' },
   { id: '2', name: 'Product 2', description: 'Description 2', price: 15, stock: 3, active: true, createdAt: '2022-01-01T00:00:00Z', updatedAt: '2022-01-01T00:00:00Z', image: '/sofkify_generic_product.png' },
   { id: '3', name: 'Product 3', description: 'Description 3', price: 20, stock: 5, active: true, createdAt: '2022-01-02T00:00:00Z', updatedAt: '2022-01-02T00:00:00Z', image: '/sofkify_generic_product.png' },
