@@ -1,4 +1,4 @@
-import type { ProductDTO } from '../types/product';
+import type { ProductDTO } from '../../types/product';
 
 // Mock data de productos (simulando respuesta de API)
 const cartItems: ProductDTO[] = [

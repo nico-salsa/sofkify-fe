@@ -21,9 +21,9 @@ const App = () => {
   };
 
   const cartItems = [
-     { id: '1', name: 'Product 1', description: 'Description 1', price: 10, stock: 2, active: true, createdAt: '2022-01-01T00:00:00Z', updatedAt: '2022-01-01T00:00:00Z', image: '/sofkify_generic_product.png' },
-    { id: '2', name: 'Product 2', description: 'Description 2', price: 15, stock: 3, active: true, createdAt: '2022-01-01T00:00:00Z', updatedAt: '2022-01-01T00:00:00Z', image: '/sofkify_generic_product.png' },
-    { id: '3', name: 'Product 3', description: 'Description 3', price: 20, stock: 5, active: true, createdAt: '2022-01-02T00:00:00Z', updatedAt: '2022-01-02T00:00:00Z', image: '/sofkify_generic_product.png' },
+     { id: '1', name: 'Product 1', description: 'Description 1', price: 10, stock: 2, active: true, createdAt: '2022-01-01T00:00:00Z', updatedAt: '2022-01-01T00:00:00Z', image: '/sofkify_generic_product.png', quantity: 1, subtotal: 10 },
+    { id: '2', name: 'Product 2', description: 'Description 2', price: 15, stock: 3, active: true, createdAt: '2022-01-01T00:00:00Z', updatedAt: '2022-01-01T00:00:00Z', image: '/sofkify_generic_product.png', quantity: 1, subtotal: 15 },
+    { id: '3', name: 'Product 3', description: 'Description 3', price: 20, stock: 5, active: true, createdAt: '2022-01-02T00:00:00Z', updatedAt: '2022-01-02T00:00:00Z', image: '/sofkify_generic_product.png', quantity: 1, subtotal: 20 },
   ]
 
   const asideClassName = isOpen ? "aside-header fixed top-0 left-0 bg-white z-10 w-full transition-all duration-300 ease-in-out h-screen" : "aside-header fixed top-0 left-[-100%] bg-white z-10 w-full transition-all duration-300 ease-in-out h-screen";
