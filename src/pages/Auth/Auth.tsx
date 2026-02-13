@@ -3,50 +3,35 @@ import LoginForm from '../../components/Auth/LoginForm';
 import RegisterForm from '../../components/Auth/RegisterForm';
 import AuthImage from '../../components/Auth/AuthImage';
 import type { AuthMode, CreateUserDTO, LoginCredentials } from '../../types/user.types';
-import { validateUserData } from '../../utils/validators';
+import { useLogin } from '../../hooks/useLogin';
+import { useRegister } from '../../hooks/useRegister';
 
 const Auth: React.FC = () => {
   const [mode, setMode] = useState<AuthMode>('login');
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const loginHook = useLogin();
+  const registerHook = useRegister();
 
   const handleToggleMode = () => {
     setMode(mode === 'login' ? 'register' : 'login');
-    setError(null);
+    loginHook.clearError();
+    registerHook.clearError();
   };
 
   const handleLogin = async (data: LoginCredentials) => {
-    setIsLoading(true);
-    setError(null);
     try {
-      // TODO: Conectar con API en siguiente issue
-      console.log('Login data:', data);
-      setTimeout(() => {
-        setIsLoading(false);
-      }, 1000);
-    } catch {
-      setError('Error al iniciar sesión');
-      setIsLoading(false);
+      await loginHook.login(data);
+      // TODO: Navigate to dashboard after successful login
+    } catch (err) {
+      // Error already handled by hook
     }
   };
 
   const handleRegister = async (data: CreateUserDTO) => {
-    setIsLoading(true);
-    setError(null);
     try {
-      validateUserData(data);
-      // TODO: Conectar con API en siguiente issue
-      console.log('Register data:', data);
-      setTimeout(() => {
-        setIsLoading(false);
-      }, 1000);
+      await registerHook.register(data);
+      // TODO: Navigate to dashboard after successful registration
     } catch (err) {
-      if (err instanceof Error) {
-        setError(err.message);
-      } else {
-        setError('Error al registrarse');
-      }
-      setIsLoading(false);
+      // Error already handled by hook
     }
   };
 
@@ -61,8 +46,8 @@ const Auth: React.FC = () => {
             <LoginForm
               onSubmit={handleLogin}
               onToggleMode={handleToggleMode}
-              isLoading={isLoading}
-              error={error}
+              isLoading={loginHook.loading}
+              error={loginHook.error}
             />
           </div>
         </>
@@ -72,8 +57,8 @@ const Auth: React.FC = () => {
             <RegisterForm
               onSubmit={handleRegister}
               onToggleMode={handleToggleMode}
-              isLoading={isLoading}
-              error={error}
+              isLoading={registerHook.loading}
+              error={registerHook.error}
             />
           </div>
           <div className="hidden lg:flex lg:w-1/2">
