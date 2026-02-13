@@ -1,7 +1,8 @@
+import type { CartItem } from '../../types/cart.types';
+
 export interface ProductCartItemProps {
-  id?: string;
-  image?: string;
-  title?: string;
-  quantity?: number;
-  price?: number; // per item
+  item: CartItem;
+  onRemove: (id: string) => void;
+  onIncrease: (id: string) => void;
+  onDecrease: (id: string) => void;
 }
