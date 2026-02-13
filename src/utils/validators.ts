@@ -39,14 +39,14 @@ export function validateLoginCredentials(credentials: LoginCredentials): void {
  * @throws Error si los datos no son válidos
  */
 export function validateUserData(data: CreateUserDTO): void {
+  // Validar documento
+  if (!data.document || data.document.trim().length < 5) {
+    throw new Error('El documento debe tener al menos 5 caracteres');
+  }
+
   // Validar nombre
   if (!data.name || data.name.trim().length < 2) {
     throw new Error('El nombre debe tener al menos 2 caracteres');
-  }
-
-  // Validar apellido
-  if (!data.lastName || data.lastName.trim().length < 2) {
-    throw new Error('El apellido debe tener al menos 2 caracteres');
   }
 
   // Validar email
@@ -73,5 +73,15 @@ export function validateUserData(data: CreateUserDTO): void {
   // Validar dirección
   if (!data.address || data.address.trim().length < 5) {
     throw new Error('La dirección debe tener al menos 5 caracteres');
+  }
+
+  // Validar ciudad
+  if (!data.city || data.city.trim().length < 2) {
+    throw new Error('La ciudad debe tener al menos 2 caracteres');
+  }
+
+  // Validar país
+  if (!data.country || data.country.trim().length < 2) {
+    throw new Error('El país debe tener al menos 2 caracteres');
   }
 }

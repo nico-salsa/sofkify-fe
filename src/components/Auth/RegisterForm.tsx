@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import type { RegisterFormProps } from './Auth.types';
-import { AUTH_MESSAGES, VALIDATION_ERRORS } from './data';
+import { AUTH_MESSAGES } from './data';
+import { validateUserData } from '../../utils/validators';
 
 const RegisterForm: React.FC<RegisterFormProps> = ({ onSubmit, onToggleMode, isLoading, error }) => {
   const [formData, setFormData] = useState({
@@ -10,60 +11,24 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onSubmit, onToggleMode, isL
     password: '',
     address: '',
     phone: '',
+    document: '',
+    city: '',
+    country: '',
   });
-  const [validationError, setValidationError] = useState('');
-
-  const validateForm = () => {
-    if (!formData.name) {
-      setValidationError(VALIDATION_ERRORS.nameRequired);
-      return false;
-    }
-    if (!formData.lastName) {
-      setValidationError(VALIDATION_ERRORS.lastNameRequired);
-      return false;
-    }
-    if (!formData.email) {
-      setValidationError(VALIDATION_ERRORS.emailRequired);
-      return false;
-    }
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      setValidationError(VALIDATION_ERRORS.emailInvalid);
-      return false;
-    }
-    if (!formData.password) {
-      setValidationError(VALIDATION_ERRORS.passwordRequired);
-      return false;
-    }
-    if (formData.password.length < 6) {
-      setValidationError(VALIDATION_ERRORS.passwordMin);
-      return false;
-    }
-    if (!formData.address) {
-      setValidationError(VALIDATION_ERRORS.addressRequired);
-      return false;
-    }
-    if (!formData.phone) {
-      setValidationError(VALIDATION_ERRORS.phoneRequired);
-      return false;
-    }
-    if (!/^\d+$/.test(formData.phone)) {
-      setValidationError(VALIDATION_ERRORS.phoneInvalid);
-      return false;
-    }
-    setValidationError('');
-    return true;
-  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
-    setValidationError('');
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!validateForm()) return;
-    await onSubmit(formData);
+    try {
+      validateUserData(formData); // This will throw if invalid
+      await onSubmit(formData);
+    } catch (err) {
+      // Error will be displayed from parent's error prop
+    }
   };
 
   return (
@@ -72,18 +37,18 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onSubmit, onToggleMode, isL
         <h1 className="text-3xl lg:text-4xl font-bold text-black mb-2">{AUTH_MESSAGES.register.title}</h1>
         <p className="text-corporate-orange text-lg mb-8">{AUTH_MESSAGES.register.subtitle}</p>
 
-        {(validationError || error) && (
+        {error && (
           <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
-            {validationError || error}
+            {error}
           </div>
         )}
 
         <form noValidate onSubmit={handleSubmit} className="space-y-4">
           <input
             type="text"
-            name="name"
-            placeholder="Nombre"
-            value={formData.name}
+            name="document"
+            placeholder="Documento de identidad"
+            value={formData.document}
             onChange={handleChange}
             disabled={isLoading}
             className="w-full px-4 py-3 bg-white border-2 border-light-gray rounded-lg focus:border-corporate-orange focus:outline-none transition-colors disabled:opacity-50"
@@ -91,9 +56,9 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onSubmit, onToggleMode, isL
 
           <input
             type="text"
-            name="lastName"
-            placeholder="Apellido"
-            value={formData.lastName}
+            name="name"
+            placeholder="Nombre completo"
+            value={formData.name}
             onChange={handleChange}
             disabled={isLoading}
             className="w-full px-4 py-3 bg-white border-2 border-light-gray rounded-lg focus:border-corporate-orange focus:outline-none transition-colors disabled:opacity-50"
@@ -134,6 +99,26 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onSubmit, onToggleMode, isL
             name="phone"
             placeholder="Teléfono"
             value={formData.phone}
+            onChange={handleChange}
+            disabled={isLoading}
+            className="w-full px-4 py-3 bg-white border-2 border-light-gray rounded-lg focus:border-corporate-orange focus:outline-none transition-colors disabled:opacity-50"
+          />
+
+          <input
+            type="text"
+            name="city"
+            placeholder="Ciudad"
+            value={formData.city}
+            onChange={handleChange}
+            disabled={isLoading}
+            className="w-full px-4 py-3 bg-white border-2 border-light-gray rounded-lg focus:border-corporate-orange focus:outline-none transition-colors disabled:opacity-50"
+          />
+
+          <input
+            type="text"
+            name="country"
+            placeholder="País"
+            value={formData.country}
             onChange={handleChange}
             disabled={isLoading}
             className="w-full px-4 py-3 bg-white border-2 border-light-gray rounded-lg focus:border-corporate-orange focus:outline-none transition-colors disabled:opacity-50"
