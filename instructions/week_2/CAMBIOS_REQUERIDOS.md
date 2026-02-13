@@ -75,26 +75,62 @@ Eliminar tipos duplicados de:
 
 **Estado actual:** Lógica en [src/pages/Auth/Auth.tsx](src/pages/Auth/Auth.tsx) (console.log/setTimeout)
 
+**Contexto Backend (sin autorización aún):**
+- ❌ Sin tokens JWT
+- ❌ Sin refresh tokens
+- ✅ Login: POST `/auth/login` (email, password) → respuesta con estado
+- ✅ Register: POST `/auth/register` (datos de usuario + password) → respuesta con estado
+- ⚠️ Password enviado como texto plano (mala práctica temporal, mejorar en futuro)
+
+**Problema Detectado:**  
+Lógica de autenticación mezclada con componente; sin abstracción de servicios.
+
+**Impacto Técnico:**
+- ❌ No reutilizable entre componentes
+- ❌ Difícil de testear
+- ❌ Acoplado a React
+- ❌ Sin validación de contratos
+
+**Patrón que Sigue Actualmente:**  
+Anti-patrón: Page with all logic
+
+**Patrones Recomendados:**
+- ✅ **Singleton Pattern**: Una única instancia del servicio en toda la app
+- ✅ **Service Layer Pattern**: Abstrae lógica de negocio (llamadas a API)
+- ✅ **Factory Pattern** (opcional): Para crear la instancia singleton de forma controlada
+- ✅ **Dependency Inversion Principle (SOLID)**: Inyectar a través de contexto/hooks, no instanciar en componentes
+
 **Crear funciones:**
 ```typescript
-- loginUser(credentials: LoginCredentials): Promise<AuthResponse>
-- registerUser(data: CreateUserDTO): Promise<AuthResponse>
+// Métodos principales
+- login(credentials: LoginCredentials): Promise<AuthResponse>
+- register(data: CreateUserDTO): Promise<AuthResponse>
+
+// Métodos auxiliares (para futura extensión con tokens)
 - validateUserExists(email: string): Promise<boolean>
 - logout(): void
-- getStoredToken(): string | null
-- saveToken(token: string): void
-- clearToken(): void
 ```
 
 **Responsabilidades:**
-- Manejo de API
-- Validación de contratos
-- Almacenamiento de tokens
-- Manejo de errores centralizado
+- Llamadas HTTP a `/auth/login` y `/auth/register`
+- Manejo de errores (400, 500, etc.)
+- Validación que los datos cumplan con tipos (LoginCredentials, CreateUserDTO)
+- Persistencia de estado de sesión (localStorage para futuro uso con tokens)
 
 **Usado por:**
-- [src/pages/Auth/Auth.tsx](src/pages/Auth/Auth.tsx)
 - [src/hooks/useAuth.ts](src/hooks/useAuth.ts) (crear)
+- [src/pages/Auth/Auth.tsx](src/pages/Auth/Auth.tsx) (refactorizar)
+
+**Criterios de Aceptación:**
+
+| Criterio | Descripción |
+|----------|-------------|
+| **Singleton** | Solo una instancia durante la app: `const authService = new AuthService()` exportada |
+| **Validación SOLID** | No violar Single Responsibility: solo maneja autenticación |
+| **Tipado** | Todos los parámetros y retornos tipados con TypeScript |
+| **Errores** | Capturar y relanzan errores de forma consistente |
+| **Sin Tokens** | Por ahora, solo guardar email del usuario en localStorage (no JWT) |
+| **Extensible** | Diseño que permita agregar tokens/refresh tokens después |
 
 ---
 
