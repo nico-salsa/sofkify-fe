@@ -3,6 +3,7 @@ import LoginForm from '../../components/Auth/LoginForm';
 import RegisterForm from '../../components/Auth/RegisterForm';
 import AuthImage from '../../components/Auth/AuthImage';
 import type { AuthMode, CreateUserDTO, LoginCredentials } from '../../types/user.types';
+import { validateUserData } from '../../utils/validators';
 
 const Auth: React.FC = () => {
   const [mode, setMode] = useState<AuthMode>('login');
@@ -33,13 +34,18 @@ const Auth: React.FC = () => {
     setIsLoading(true);
     setError(null);
     try {
+      validateUserData(data);
       // TODO: Conectar con API en siguiente issue
       console.log('Register data:', data);
       setTimeout(() => {
         setIsLoading(false);
       }, 1000);
-    } catch {
-      setError('Error al registrarse');
+    } catch (err) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError('Error al registrarse');
+      }
       setIsLoading(false);
     }
   };
