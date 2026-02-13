@@ -4,6 +4,9 @@ import type { Product } from './product';
 export interface CartItem extends Omit<Product, 'status' | 'createdAt' | 'updatedAt'> {
 	quantity: number;
 	subtotal: number;
+	onRemove?: (id: string) => void;
+  	onIncrease?: (id: string) => void;
+  	onDecrease?: (id: string) => void;
 }
 
 // ============================================
