@@ -35,7 +35,6 @@ El core del negocio nunca conoce Spring, JPA, HTTP, RabbitMQ ni detalles técnic
 ## Estructura General del Proyecto
 
 ```
-com.santiago.project
 │
 ├── application
 │   ├── service

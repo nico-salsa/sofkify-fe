@@ -6,7 +6,6 @@ import { validateUserData } from '../../utils/validators';
 const RegisterForm: React.FC<RegisterFormProps> = ({ onSubmit, onToggleMode, isLoading, error }) => {
   const [formData, setFormData] = useState({
     name: '',
-    lastName: '',
     email: '',
     password: '',
     address: '',
