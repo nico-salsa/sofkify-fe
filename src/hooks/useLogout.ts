@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import { authStorage } from '../services/authStorage';
+import { authStorage } from '../services/auth/authStorage';
 
 export interface UseLogoutReturn {
   logout: () => void;

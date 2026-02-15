@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import LoginForm from '../../components/Auth/LoginForm';
 import RegisterForm from '../../components/Auth/RegisterForm';
 import AuthImage from '../../components/Auth/AuthImage';
@@ -8,6 +9,7 @@ import { useRegister } from '../../hooks/useRegister';
 
 const Auth: React.FC = () => {
   const [mode, setMode] = useState<AuthMode>('login');
+  const navigate = useNavigate();
   const loginHook = useLogin();
   const registerHook = useRegister();
 
@@ -20,7 +22,7 @@ const Auth: React.FC = () => {
   const handleLogin = async (data: LoginCredentials) => {
     try {
       await loginHook.login(data);
-      // TODO: Navigate to dashboard after successful login
+      navigate('/');
     } catch (err) {
       // Error already handled by hook
     }
@@ -29,7 +31,7 @@ const Auth: React.FC = () => {
   const handleRegister = async (data: CreateUserDTO) => {
     try {
       await registerHook.register(data);
-      // TODO: Navigate to dashboard after successful registration
+      navigate('/');
     } catch (err) {
       // Error already handled by hook
     }

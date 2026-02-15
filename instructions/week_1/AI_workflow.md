@@ -212,6 +212,7 @@ const Button = ({ variant = 'primary', size = 'md' }: ButtonProps) => (
   />
 );
 ```
+
 ---
 
 ## Design Patterns
@@ -553,6 +554,7 @@ class ErrorBoundary extends Component<Props, State> {
   }
 }
 ```
+
 ---
 
 ## Anti-Patterns to Avoid
@@ -646,6 +648,7 @@ docs(readme): update installation instructions
 
 ---
 
+**Remember**: Write code that your future self and teammates will thank you for. Prioritize clarity over cleverness, and consistency over personal preference.
 ### SOLID Principles in React
 
 #### Single Responsibility Principle (SRP)
