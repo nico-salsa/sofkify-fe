@@ -1,34 +1,24 @@
-import React, { useState } from 'react';
+import React from 'react';
 import type { RegisterFormProps } from './Auth.types';
 import { AUTH_MESSAGES } from './data';
+import { useAuthValidation } from '../../hooks/useAuthValidation';
 import { validateUserData } from '../../utils/validators';
 
 const RegisterForm: React.FC<RegisterFormProps> = ({ onSubmit, onToggleMode, isLoading, error }) => {
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    password: '',
-    address: '',
-    phone: '',
-    document: '',
-    city: '',
-    country: '',
+  const { formData, errors, touched, handleChange, handleBlur, handleSubmit } = useAuthValidation({
+    initialState: {
+      name: '',
+      email: '',
+      password: '',
+      address: '',
+      phone: '',
+      document: '',
+      city: '',
+      country: '',
+    },
+    validate: validateUserData,
+    onSubmit,
   });
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-      validateUserData(formData); // This will throw if invalid
-      await onSubmit(formData);
-    } catch (err) {
-      // Error will be displayed from parent's error prop
-    }
-  };
 
   return (
     <div className="w-full flex items-center justify-center bg-white min-h-screen px-4 py-8 lg:py-0">
@@ -43,85 +33,157 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onSubmit, onToggleMode, isL
         )}
 
         <form noValidate onSubmit={handleSubmit} className="space-y-4">
-          <input
-            type="text"
-            name="document"
-            placeholder="Documento de identidad"
-            value={formData.document}
-            onChange={handleChange}
-            disabled={isLoading}
-            className="w-full px-4 py-3 bg-white border-2 border-light-gray rounded-lg focus:border-corporate-orange focus:outline-none transition-colors disabled:opacity-50"
-          />
+          <div>
+            <input
+              type="text"
+              name="document"
+              placeholder="Documento de identidad"
+              value={formData.document}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              disabled={isLoading}
+              className={`w-full px-4 py-3 bg-white border-2 rounded-lg focus:outline-none transition-colors disabled:opacity-50 ${touched.document && errors.document
+                  ? 'border-red-500 focus:border-red-500'
+                  : 'border-light-gray focus:border-corporate-orange'
+                }`}
+            />
+            {touched.document && errors.document && (
+              <span className="text-red-500 text-sm mt-1 block">{errors.document}</span>
+            )}
+          </div>
 
-          <input
-            type="text"
-            name="name"
-            placeholder="Nombre completo"
-            value={formData.name}
-            onChange={handleChange}
-            disabled={isLoading}
-            className="w-full px-4 py-3 bg-white border-2 border-light-gray rounded-lg focus:border-corporate-orange focus:outline-none transition-colors disabled:opacity-50"
-          />
+          <div>
+            <input
+              type="text"
+              name="name"
+              placeholder="Nombre completo"
+              value={formData.name}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              disabled={isLoading}
+              className={`w-full px-4 py-3 bg-white border-2 rounded-lg focus:outline-none transition-colors disabled:opacity-50 ${touched.name && errors.name
+                  ? 'border-red-500 focus:border-red-500'
+                  : 'border-light-gray focus:border-corporate-orange'
+                }`}
+            />
+            {touched.name && errors.name && (
+              <span className="text-red-500 text-sm mt-1 block">{errors.name}</span>
+            )}
+          </div>
 
-          <input
-            type="email"
-            name="email"
-            placeholder="Correo electrónico"
-            value={formData.email}
-            onChange={handleChange}
-            disabled={isLoading}
-            className="w-full px-4 py-3 bg-white border-2 border-light-gray rounded-lg focus:border-corporate-orange focus:outline-none transition-colors disabled:opacity-50"
-          />
+          <div>
+            <input
+              type="email"
+              name="email"
+              placeholder="Correo electrónico"
+              value={formData.email}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              disabled={isLoading}
+              className={`w-full px-4 py-3 bg-white border-2 rounded-lg focus:outline-none transition-colors disabled:opacity-50 ${touched.email && errors.email
+                  ? 'border-red-500 focus:border-red-500'
+                  : 'border-light-gray focus:border-corporate-orange'
+                }`}
+            />
+            {touched.email && errors.email && (
+              <span className="text-red-500 text-sm mt-1 block">{errors.email}</span>
+            )}
+          </div>
 
-          <input
-            type="password"
-            name="password"
-            placeholder="Contraseña"
-            value={formData.password}
-            onChange={handleChange}
-            disabled={isLoading}
-            className="w-full px-4 py-3 bg-white border-2 border-light-gray rounded-lg focus:border-corporate-orange focus:outline-none transition-colors disabled:opacity-50"
-          />
+          <div>
+            <input
+              type="password"
+              name="password"
+              placeholder="Contraseña"
+              value={formData.password}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              disabled={isLoading}
+              className={`w-full px-4 py-3 bg-white border-2 rounded-lg focus:outline-none transition-colors disabled:opacity-50 ${touched.password && errors.password
+                  ? 'border-red-500 focus:border-red-500'
+                  : 'border-light-gray focus:border-corporate-orange'
+                }`}
+            />
+            {touched.password && errors.password && (
+              <span className="text-red-500 text-sm mt-1 block">{errors.password}</span>
+            )}
+          </div>
 
-          <input
-            type="text"
-            name="address"
-            placeholder="Dirección"
-            value={formData.address}
-            onChange={handleChange}
-            disabled={isLoading}
-            className="w-full px-4 py-3 bg-white border-2 border-light-gray rounded-lg focus:border-corporate-orange focus:outline-none transition-colors disabled:opacity-50"
-          />
+          <div>
+            <input
+              type="text"
+              name="address"
+              placeholder="Dirección"
+              value={formData.address}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              disabled={isLoading}
+              className={`w-full px-4 py-3 bg-white border-2 rounded-lg focus:outline-none transition-colors disabled:opacity-50 ${touched.address && errors.address
+                  ? 'border-red-500 focus:border-red-500'
+                  : 'border-light-gray focus:border-corporate-orange'
+                }`}
+            />
+            {touched.address && errors.address && (
+              <span className="text-red-500 text-sm mt-1 block">{errors.address}</span>
+            )}
+          </div>
 
-          <input
-            type="tel"
-            name="phone"
-            placeholder="Teléfono"
-            value={formData.phone}
-            onChange={handleChange}
-            disabled={isLoading}
-            className="w-full px-4 py-3 bg-white border-2 border-light-gray rounded-lg focus:border-corporate-orange focus:outline-none transition-colors disabled:opacity-50"
-          />
+          <div>
+            <input
+              type="tel"
+              name="phone"
+              placeholder="Teléfono"
+              value={formData.phone}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              disabled={isLoading}
+              className={`w-full px-4 py-3 bg-white border-2 rounded-lg focus:outline-none transition-colors disabled:opacity-50 ${touched.phone && errors.phone
+                  ? 'border-red-500 focus:border-red-500'
+                  : 'border-light-gray focus:border-corporate-orange'
+                }`}
+            />
+            {touched.phone && errors.phone && (
+              <span className="text-red-500 text-sm mt-1 block">{errors.phone}</span>
+            )}
+          </div>
 
-          <input
-            type="text"
-            name="city"
-            placeholder="Ciudad"
-            value={formData.city}
-            onChange={handleChange}
-            disabled={isLoading}
-            className="w-full px-4 py-3 bg-white border-2 border-light-gray rounded-lg focus:border-corporate-orange focus:outline-none transition-colors disabled:opacity-50"
-          />
+          <div>
+            <input
+              type="text"
+              name="city"
+              placeholder="Ciudad"
+              value={formData.city}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              disabled={isLoading}
+              className={`w-full px-4 py-3 bg-white border-2 rounded-lg focus:outline-none transition-colors disabled:opacity-50 ${touched.city && errors.city
+                  ? 'border-red-500 focus:border-red-500'
+                  : 'border-light-gray focus:border-corporate-orange'
+                }`}
+            />
+            {touched.city && errors.city && (
+              <span className="text-red-500 text-sm mt-1 block">{errors.city}</span>
+            )}
+          </div>
 
-          <input
-            type="text"
-            name="country"
-            placeholder="País"
-            value={formData.country}
-            onChange={handleChange}
-            disabled={isLoading}
-            className="w-full px-4 py-3 bg-white border-2 border-light-gray rounded-lg focus:border-corporate-orange focus:outline-none transition-colors disabled:opacity-50"
-          />
+          <div>
+            <input
+              type="text"
+              name="country"
+              placeholder="País"
+              value={formData.country}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              disabled={isLoading}
+              className={`w-full px-4 py-3 bg-white border-2 rounded-lg focus:outline-none transition-colors disabled:opacity-50 ${touched.country && errors.country
+                  ? 'border-red-500 focus:border-red-500'
+                  : 'border-light-gray focus:border-corporate-orange'
+                }`}
+            />
+            {touched.country && errors.country && (
+              <span className="text-red-500 text-sm mt-1 block">{errors.country}</span>
+            )}
+          </div>
 
           <button
             type="submit"

@@ -21,13 +21,17 @@ async function postRequest<T>(endpoint: string, body: any): Promise<T> {
     },
     body: JSON.stringify(body),
   });
+
   const data = await response.json();
+
   if (!response.ok) {
+    //console.log(data);
     throw new Error(data.message || `Error en ${endpoint}`);
   }
 
   return data;
 }
+
 /**
  * Mapper temporal: convierte CreateUserDTO al formato que espera el backend
  * TODO: Refactorizar cuando el backend acepte todos los campos
