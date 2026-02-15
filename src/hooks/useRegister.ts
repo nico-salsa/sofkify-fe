@@ -1,7 +1,7 @@
 import { useState, useCallback } from 'react';
 import { validateUserData } from '../utils/validators';
-import { authApi } from '../services/authApi';
-import { authStorage } from '../services/authStorage';
+import { authApi } from '../services/auth/authApi';
+import { authStorage } from '../services/auth/authStorage';
 import type { CreateUserDTO } from '../types/user.types';
 
 export interface UseRegisterReturn {

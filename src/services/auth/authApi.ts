@@ -1,4 +1,4 @@
-import type { LoginCredentials, CreateUserDTO, AuthResponse } from '../types/user.types';
+import type { LoginCredentials, CreateUserDTO, AuthResponse } from '../../types/user.types';
 
 /**
  * authApi - Servicio para llamadas HTTP de autenticación
@@ -9,7 +9,6 @@ import type { LoginCredentials, CreateUserDTO, AuthResponse } from '../types/use
 
 // Configuración base (se define UNA sola vez)
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080';
-
 /**
  * Función auxiliar para hacer POST requests
  * Centraliza la configuración de fetch
@@ -22,17 +21,13 @@ async function postRequest<T>(endpoint: string, body: any): Promise<T> {
     },
     body: JSON.stringify(body),
   });
-
   const data = await response.json();
-
   if (!response.ok) {
-    //console.log(data);
     throw new Error(data.message || `Error en ${endpoint}`);
   }
 
   return data;
 }
-
 /**
  * Mapper temporal: convierte CreateUserDTO al formato que espera el backend
  * TODO: Refactorizar cuando el backend acepte todos los campos
@@ -61,7 +56,6 @@ export const authApi = {
    */
   async register(data: CreateUserDTO): Promise<AuthResponse> {
     const backendData = mapToBackendRegisterFormat(data);
-    console.log(backendData);
     return postRequest<AuthResponse>('/api/users', backendData);
   },
 };

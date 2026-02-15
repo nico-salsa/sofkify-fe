@@ -1,15 +1,15 @@
-    import { useState, useCallback } from 'react';
-    import { validateLoginCredentials } from '../utils/validators';
-    import { authApi } from '../services/authApi';
-    import { authStorage } from '../services/authStorage';
-    import type { LoginCredentials } from '../types/user.types';
+import { useState, useCallback } from 'react';
+import { validateLoginCredentials } from '../utils/validators';
+import { authApi } from '../services/auth/authApi';
+import { authStorage } from '../services/auth/authStorage';
+import type { LoginCredentials } from '../types/user.types';
 
 export interface UseLoginReturn {
-  login: (credentials: LoginCredentials) => Promise<void>;
-  loading: boolean;
-  error: string | null;
+    login: (credentials: LoginCredentials) => Promise<void>;
+    loading: boolean;
+    error: string | null;
     clearError: () => void;
-    }
+}
 
 export function useLogin(): UseLoginReturn {
     const [loading, setLoading] = useState<boolean>(false);
@@ -46,4 +46,4 @@ export function useLogin(): UseLoginReturn {
         error,
         clearError,
     };
-    }
+}
