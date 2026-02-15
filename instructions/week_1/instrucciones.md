@@ -295,4 +295,181 @@ Cualquier generación de código debe respetar estas reglas.
 
 ---
 
-Este archivo define la base arquitectónica del proyecto y debe ser respetado por cualquier componente nuevo que se agregue.
+---
+
+## Esquemas de Datos & Integración con API
+
+### Responsabilidades Backend vs Frontend
+
+**IMPORTANTE**: El frontend NUNCA genera IDs, fechas ni estados. Estos son SIEMPRE generados y gestionados por el backend.
+
+**Responsabilidades del Frontend:**
+- Mostrar datos recibidos de la API
+- Enviar datos de usuario al backend
+- Validar solo los campos ingresados por el usuario
+- Gestionar estado de UI (loading, errores, formularios)
+
+**Responsabilidades del Backend:**
+- Generar IDs únicos
+- Establecer fechas de creación/actualización
+- Gestionar estados y transiciones
+- Aplicar reglas de negocio
+
+---
+
+### Esquema Product
+```typescript
+// Tipo completo de Product (recibido desde la API)
+interface Product {
+  // Campos generados por backend (SOLO LECTURA en frontend)
+  id: string;                    // Generado por backend
+  createdAt: Date;               // Generado por backend
+  updatedAt: Date;               // Generado por backend
+  status: 'Active' | 'Exhausted' | 'Eliminated';  // Gestionado por backend
+  
+  // Campos proporcionados por usuario (editables en frontend)
+  name: string;
+  price: number;
+  description: string;
+  stock: number;
+}
+
+// Tipo para crear un producto (enviado AL backend)
+interface CreateProductInput {
+  name: string;
+  price: number;
+  description: string;
+  stock: number;
+  // Nota: NO incluye id, status ni fechas - el backend los genera
+}
+
+// Tipo para actualizar un producto (enviado AL backend)
+interface UpdateProductInput {
+  name?: string;
+  price?: number;
+  description?: string;
+  stock?: number;
+  // Nota: id va en el parámetro de URL, status y fechas son gestionados por backend
+}
+```
+
+**Lógica de Status** (Gestionado por Backend):
+- `Active`: Estado por defecto, producto disponible
+- `Exhausted`: Cuando el stock llega a 0 (auto-establecido por backend)
+- `Eliminated`: Borrado lógico (establecido por backend)
+```typescript
+// ❌ NUNCA hacer esto en frontend
+const newProduct = {
+  id: generateId(),           // MAL - el backend genera
+  status: 'Active',           // MAL - el backend establece
+  createdAt: new Date(),      // MAL - el backend genera
+  name: formData.name,
+  price: formData.price,
+};
+
+// ✅ Correcto - solo enviar datos de usuario
+const createProduct = async (input: CreateProductInput) => {
+  const response = await fetch('/api/products', {
+    method: 'POST',
+    body: JSON.stringify({
+      name: input.name,
+      price: input.price,
+      description: input.description,
+      stock: input.stock,
+    }),
+  });
+  
+  return response.json(); // Backend retorna Product completo con id, status y fechas
+};
+```
+
+---
+
+### Esquema Client
+```typescript
+// Tipo completo de Client (recibido desde la API)
+interface Client {
+  // Campos generados por backend (SOLO LECTURA en frontend)
+  id: string;                    // Generado por backend
+  createdAt: Date;               // Generado por backend
+  updatedAt: Date;               // Generado por backend
+  status: 'Active' | 'Eliminated';  // Gestionado por backend
+  
+  // Campos proporcionados por usuario (editables en frontend)
+  document: string;              // DNI, pasaporte, etc.
+  email: string;
+  name: string;
+  phone: string;
+  address: string;
+  city: string;
+  country: string;
+}
+
+// Tipo para crear un cliente (enviado AL backend)
+interface CreateClientInput {
+  document: string;
+  email: string;
+  name: string;
+  phone: string;
+  address: string;
+  city: string;
+  country: string;
+  // Nota: NO incluye id, status ni fechas
+}
+
+// Tipo para actualizar un cliente (enviado AL backend)
+interface UpdateClientInput {
+  document?: string;
+  email?: string;
+  name?: string;
+  phone?: string;
+  address?: string;
+  city?: string;
+  country?: string;
+  // Nota: id va en el parámetro de URL, status y fechas son gestionados por backend
+}
+```
+
+**Lógica de Status** (Gestionado por Backend):
+- `Active`: Estado por defecto, cliente activo
+- `Eliminated`: Borrado lógico (establecido por backend)
+```typescript
+// ✅ Implementación correcta
+const ClientForm = () => {
+  const createClientMutation = useMutation({
+    mutationFn: async (input: CreateClientInput) => {
+      const response = await fetch('/api/clients', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(input),
+      });
+      
+      if (!response.ok) throw new Error('Failed to create client');
+      return response.json() as Promise<Client>;
+    },
+  });
+  
+  const handleSubmit = (formData: CreateClientInput) => {
+    // Solo enviar datos proporcionados por el usuario
+    createClientMutation.mutate(formData);
+  };
+  
+  return (/* JSX del formulario */);
+};
+```
+
+---
+
+### Puntos Clave
+
+✅ **HACER:**
+- Definir tipos separados para entidades completas (full) y entradas (create/update)
+- Dejar que el backend genere todos los IDs, fechas y valores de status
+- Enviar solo datos proporcionados por el usuario a la API
+- Usar tipos TypeScript apropiados para requests/responses de API
+
+❌ **NO HACER:**
+- Generar IDs en frontend
+- Establecer valores de status en frontend
+- Crear o manipular timestamps (fechas)
+- Enviar campos gestionados por backend en requests de create/update

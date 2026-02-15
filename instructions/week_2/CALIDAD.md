@@ -3,7 +3,6 @@
 ## 1. ANATOMÍA DE UN INCIDENTE
 
 Este documento recoge dos incidentes críticos que ocurrieron durante el desarrollo del proyecto Softkify, uno en el frontend y otro en el backend, ambos relacionados con la integración entre capas.
-
 ---
 
 ### INCIDENTE 1: Variables de Entorno - Frontend
@@ -694,7 +693,7 @@ class UserControllerIntegrationTest {
                 .content(objectMapper.writeValueAsString(invalidUser)))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message", containsString("email")));
-    }
+    } 
 
     @Test
     @DisplayName("POST /api/users debe retornar 409 si el email ya existe")
@@ -977,27 +976,13 @@ Cada desarrollador debe verificar:
 
 ---
 
-## 7. RECURSOS Y REFERENCIAS
-
-### Documentación
-- [Vitest](https://vitest.dev/) - Framework de testing para Vite
-- [React Testing Library](https://testing-library.com/react) - Testing de componentes React
-- [Playwright](https://playwright.dev/) - Framework E2E
-- [JUnit 5](https://junit.org/junit5/) - Testing unitario Java
-- [Spring Boot Test](https://docs.spring.io/spring-boot/docs/current/reference/html/features.html#features.testing) - Testing de integración
-- [Rest Assured](https://rest-assured.io/) - Testing de APIs REST
-
 ### Herramientas de Cobertura
 - Frontend: [Vitest Coverage (via c8)](https://vitest.dev/guide/coverage.html)
 - Backend: [JaCoCo](https://www.jacoco.org/jacoco/)
 
-### Guías Internas
-- `CONTRIBUTING.md` - Guía de contribución del proyecto
-- `TESTING_STRATEGY.md` - Estrategia de testing completa
-- `.github/workflows/ci.yml` - Pipeline de CI con tests automáticos
 
 ---
 
-**Última actualización**: 2024-02-15  
+**Última actualización**: 2026-02-15  
 **Mantenido por**: Equipo de Calidad Softkify  
-**Versión**: 2.0 (Incluye incidentes de Frontend y Backend)
+**Versión**: 1.0 (Incluye incidentes de Frontend y Backend)
