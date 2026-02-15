@@ -1,43 +1,15 @@
-import React, { useState } from 'react';
+import React from 'react';
 import type { LoginFormProps } from './Auth.types';
-import { AUTH_MESSAGES, VALIDATION_ERRORS } from './data';
+import { AUTH_MESSAGES } from './data';
+import { useAuthValidation } from '../../hooks/useAuthValidation';
+import { validateLoginCredentials } from '../../utils/validators';
 
 const LoginForm: React.FC<LoginFormProps> = ({ onSubmit, onToggleMode, isLoading, error }) => {
-  const [formData, setFormData] = useState({ email: '', password: '' });
-  const [validationError, setValidationError] = useState('');
-
-  const validateForm = () => {
-    if (!formData.email) {
-      setValidationError(VALIDATION_ERRORS.emailRequired);
-      return false;
-    }
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      setValidationError(VALIDATION_ERRORS.emailInvalid);
-      return false;
-    }
-    if (!formData.password) {
-      setValidationError(VALIDATION_ERRORS.passwordRequired);
-      return false;
-    }
-    if (formData.password.length < 6) {
-      setValidationError(VALIDATION_ERRORS.passwordMin);
-      return false;
-    }
-    setValidationError('');
-    return true;
-  };
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-    setValidationError('');
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!validateForm()) return;
-    await onSubmit(formData);
-  };
+  const { formData, errors, touched, handleChange, handleBlur, handleSubmit } = useAuthValidation({
+    initialState: { email: '', password: '' },
+    validate: validateLoginCredentials,
+    onSubmit,
+  });
 
   return (
     <div className="w-full flex items-center justify-center bg-white min-h-screen px-4 py-8 lg:py-0">
@@ -45,9 +17,9 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSubmit, onToggleMode, isLoading
         <h1 className="text-3xl lg:text-4xl font-bold text-black mb-2">{AUTH_MESSAGES.login.title}</h1>
         <p className="text-corporate-orange text-lg mb-8">{AUTH_MESSAGES.login.subtitle}</p>
 
-        {(validationError || error) && (
+        {error && (
           <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
-            {validationError || error}
+            {error}
           </div>
         )}
 
@@ -59,9 +31,16 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSubmit, onToggleMode, isLoading
               placeholder="Correo electrónico"
               value={formData.email}
               onChange={handleChange}
+              onBlur={handleBlur}
               disabled={isLoading}
-              className="w-full px-4 py-3 bg-white border-2 border-light-gray rounded-lg focus:border-corporate-orange focus:outline-none transition-colors disabled:opacity-50"
+              className={`w-full px-4 py-3 bg-white border-2 rounded-lg focus:outline-none transition-colors disabled:opacity-50 ${touched.email && errors.email
+                  ? 'border-red-500 focus:border-red-500'
+                  : 'border-light-gray focus:border-corporate-orange'
+                }`}
             />
+            {touched.email && errors.email && (
+              <span className="text-red-500 text-sm mt-1 block">{errors.email}</span>
+            )}
           </div>
 
           <div>
@@ -71,9 +50,16 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSubmit, onToggleMode, isLoading
               placeholder="Contraseña"
               value={formData.password}
               onChange={handleChange}
+              onBlur={handleBlur}
               disabled={isLoading}
-              className="w-full px-4 py-3 bg-white border-2 border-light-gray rounded-lg focus:border-corporate-orange focus:outline-none transition-colors disabled:opacity-50"
+              className={`w-full px-4 py-3 bg-white border-2 rounded-lg focus:outline-none transition-colors disabled:opacity-50 ${touched.password && errors.password
+                  ? 'border-red-500 focus:border-red-500'
+                  : 'border-light-gray focus:border-corporate-orange'
+                }`}
             />
+            {touched.password && errors.password && (
+              <span className="text-red-500 text-sm mt-1 block">{errors.password}</span>
+            )}
           </div>
 
           <button

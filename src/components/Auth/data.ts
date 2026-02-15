@@ -19,7 +19,7 @@ export const VALIDATION_ERRORS = {
   emailRequired: 'El correo es requerido',
   emailInvalid: 'Ingresa un correo válido',
   passwordRequired: 'La contraseña es requerida',
-  passwordMin: 'La contraseña debe tener al menos 6 caracteres',
+  passwordMin: 'La contraseña debe tener al menos 8 caracteres',
   nameRequired: 'El nombre es requerido',
   lastNameRequired: 'El apellido es requerido',
   addressRequired: 'La dirección es requerida',
