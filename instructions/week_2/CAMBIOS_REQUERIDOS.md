@@ -369,21 +369,20 @@ export const useCartContext = (): CartContextType
 
 ## UTILIDADES - CREAR
 
-### 6.1 src/utils/formatters.ts (CREAR)
+### 6.1 src/utils/formatters.ts (CREAR) - ✅ COMPLETADO
 
-**Estado actual:** Funciones locales en [src/pages/Product/ProductDetail.tsx](src/pages/Product/ProductDetail.tsx)
+**Estado actual:** Funciones implementadas y centralizadas en [src/utils/formatters.ts](src/utils/formatters.ts).
 
-**Crear funciones:**
+**Funciones disponibles:**
 ```typescript
-- formatCurrency(price: number, currency: string): string
+- formatCurrency(price: number): string // Formato COP ($ 1.000.000)
 - formatDate(date: string | Date): string
-- formatPhoneNumber(phone: string): string
 - truncateText(text: string, maxLength: number): string
 ```
 
 **Usado por:**
-- ProductDetail (formatCurrency ya existe aquí)
-- Varios componentes
+- [src/pages/Product/ProductDetail.tsx](src/pages/Product/ProductDetail.tsx)
+- Futuros componentes que requieran formato.
 
 ---
 
