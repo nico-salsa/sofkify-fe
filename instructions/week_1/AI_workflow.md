@@ -212,7 +212,151 @@ const Button = ({ variant = 'primary', size = 'md' }: ButtonProps) => (
   />
 );
 ```
+---
 
+## Design Patterns
+
+### Container/Presenter Pattern
+- Separate logic (Container) from UI (Presenter)
+- Containers handle data fetching and state management
+- Presenters focus purely on rendering
+```typescript
+// Container
+const UserProfileContainer = () => {
+  const { user, isLoading } = useUser();
+  const handleEdit = () => { /* logic */ };
+  
+  return <UserProfilePresenter user={user} isLoading={isLoading} onEdit={handleEdit} />;
+};
+
+// Presenter
+interface UserProfilePresenterProps {
+  user: User | null;
+  isLoading: boolean;
+  onEdit: () => void;
+}
+
+const UserProfilePresenter = ({ user, isLoading, onEdit }: UserProfilePresenterProps) => {
+  if (isLoading) return <Skeleton />;
+  if (!user) return <EmptyState />;
+  
+  return (/* Pure UI */);
+};
+```
+
+### Compound Component Pattern
+- Related components that work together
+- Share implicit state without prop drilling
+```typescript
+const Tabs = ({ children }: { children: ReactNode }) => {
+  const [activeTab, setActiveTab] = useState(0);
+  
+  return (
+    <TabsContext.Provider value={{ activeTab, setActiveTab }}>
+      <div className="tabs">{children}</div>
+    </TabsContext.Provider>
+  );
+};
+
+Tabs.List = ({ children }: { children: ReactNode }) => (
+  <div className="flex border-b">{children}</div>
+);
+
+Tabs.Tab = ({ index, children }: { index: number; children: ReactNode }) => {
+  const { activeTab, setActiveTab } = useTabsContext();
+  return (
+    <button
+      onClick={() => setActiveTab(index)}
+      className={activeTab === index ? 'active' : ''}
+    >
+      {children}
+    </button>
+  );
+};
+
+// Usage
+<Tabs>
+  <Tabs.List>
+    <Tabs.Tab index={0}>Tab 1</Tabs.Tab>
+    <Tabs.Tab index={1}>Tab 2</Tabs.Tab>
+  </Tabs.List>
+</Tabs>
+```
+
+### Higher-Order Component (HOC) Pattern
+- Wrap components to add functionality
+- Use sparingly - prefer hooks for most cases
+```typescript
+const withAuth = <P extends object>(Component: ComponentType<P>) => {
+  return (props: P) => {
+    const { isAuthenticated } = useAuth();
+    
+    if (!isAuthenticated) return <Navigate to="/login" />;
+    
+    return <Component {...props} />;
+  };
+};
+
+// Usage
+const Dashboard = withAuth(DashboardComponent);
+```
+
+### Factory Pattern
+- Create components dynamically based on type
+- Useful for forms, charts, or dynamic content
+```typescript
+type FieldType = 'text' | 'email' | 'select' | 'checkbox';
+
+interface FieldConfig {
+  type: FieldType;
+  name: string;
+  label: string;
+  options?: string[];
+}
+
+const FieldFactory = ({ type, ...props }: FieldConfig) => {
+  const fields = {
+    text: TextInput,
+    email: EmailInput,
+    select: SelectInput,
+    checkbox: CheckboxInput,
+  };
+  
+  const Component = fields[type];
+  return <Component {...props} />;
+};
+```
+
+### Observer Pattern (Pub/Sub)
+- Use for event-driven architecture
+- Custom event bus for cross-component communication
+```typescript
+type EventCallback = (data: any) => void;
+
+class EventBus {
+  private events: Map<string, EventCallback[]> = new Map();
+  
+  subscribe(event: string, callback: EventCallback) {
+    if (!this.events.has(event)) {
+      this.events.set(event, []);
+    }
+    this.events.get(event)!.push(callback);
+  }
+  
+  publish(event: string, data: any) {
+    this.events.get(event)?.forEach(callback => callback(data));
+  }
+  
+  unsubscribe(event: string, callback: EventCallback) {
+    const callbacks = this.events.get(event);
+    if (callbacks) {
+      this.events.set(event, callbacks.filter(cb => cb !== callback));
+    }
+  }
+}
+
+export const eventBus = new EventBus();
+```
 ---
 
 ## Project Structure
@@ -409,7 +553,57 @@ class ErrorBoundary extends Component<Props, State> {
   }
 }
 ```
+---
 
+## Anti-Patterns to Avoid
+
+### God Components
+- ❌ Components with 300+ lines
+- ❌ Components that do data fetching, business logic, and complex UI
+- ✅ Break into smaller, focused components
+
+### Prop Drilling Hell
+- ❌ Passing props through 4+ levels
+- ✅ Use Context or state management
+
+### Premature Optimization
+- ❌ Memoizing everything
+- ❌ Over-engineering simple components
+- ✅ Optimize only when performance issues are measured
+
+### Magic Numbers/Strings
+```typescript
+// ❌ Avoid
+if (user.role === 'admin') { }
+setTimeout(() => {}, 3000);
+
+// ✅ Good
+const USER_ROLES = {
+  ADMIN: 'admin',
+  USER: 'user',
+} as const;
+
+const TIMERS = {
+  NOTIFICATION_DELAY: 3000,
+} as const;
+
+if (user.role === USER_ROLES.ADMIN) { }
+setTimeout(() => {}, TIMERS.NOTIFICATION_DELAY);
+```
+
+### Mutating State Directly
+```typescript
+// ❌ Avoid
+const handleAdd = () => {
+  items.push(newItem); // Mutation!
+  setItems(items);
+};
+
+// ✅ Good
+const handleAdd = () => {
+  setItems([...items, newItem]);
+};
+```
 ---
 
 ## Git Conventions
@@ -452,4 +646,139 @@ docs(readme): update installation instructions
 
 ---
 
-**Remember**: Write code that your future self and teammates will thank you for. Prioritize clarity over cleverness, and consistency over personal preference.
+### SOLID Principles in React
+
+#### Single Responsibility Principle (SRP)
+- Each component should have one reason to change
+- Separate data fetching, business logic, and presentation
+- Extract complex logic into custom hooks or utility functions
+```typescript
+// ❌ Avoid - Component doing too much
+const UserProfile = () => {
+  const [user, setUser] = useState(null);
+  const [posts, setPosts] = useState([]);
+  
+  useEffect(() => {
+    // Fetching user
+    fetch('/api/user').then(res => setUser(res));
+    // Fetching posts
+    fetch('/api/posts').then(res => setPosts(res));
+    // Analytics tracking
+    trackPageView();
+  }, []);
+  
+  return (/* complex JSX with business logic */);
+};
+
+// ✅ Good - Separated concerns
+const UserProfile = () => {
+  const { user } = useUser();
+  const { posts } = useUserPosts(user?.id);
+  
+  usePageTracking('user-profile');
+  
+  return <UserProfileView user={user} posts={posts} />;
+};
+```
+
+#### Open/Closed Principle (OCP)
+- Components should be open for extension, closed for modification
+- Use composition and props for flexibility
+- Leverage render props and children patterns
+```typescript
+// ❌ Avoid - Modifying component for new features
+const Button = ({ type }: { type: 'primary' | 'secondary' | 'danger' | 'success' }) => {
+  // Keep adding more types...
+};
+
+// ✅ Good - Extensible through props
+interface ButtonProps {
+  variant?: string;
+  className?: string;
+  children: ReactNode;
+}
+
+const Button = ({ variant = 'primary', className, children }: ButtonProps) => (
+  <button className={clsx(baseStyles, variantStyles[variant], className)}>
+    {children}
+  </button>
+);
+```
+
+#### Liskov Substitution Principle (LSP)
+- Child components should be substitutable for parent components
+- Maintain consistent prop interfaces across similar components
+- Don't break expected behavior in derived components
+```typescript
+// ✅ Good - Consistent interface
+interface BaseInputProps {
+  value: string;
+  onChange: (value: string) => void;
+  disabled?: boolean;
+}
+
+const TextInput = (props: BaseInputProps) => { /* */ };
+const EmailInput = (props: BaseInputProps) => { /* */ };
+const PasswordInput = (props: BaseInputProps) => { /* */ };
+```
+
+#### Interface Segregation Principle (ISP)
+- Don't force components to depend on props they don't use
+- Create specific, focused prop interfaces
+- Split large interfaces into smaller ones
+```typescript
+// ❌ Avoid - Bloated interface
+interface UserCardProps {
+  user: User;
+  showEmail: boolean;
+  showPhone: boolean;
+  showAddress: boolean;
+  onEdit: () => void;
+  onDelete: () => void;
+  onShare: () => void;
+  // Too many optional props...
+}
+
+// ✅ Good - Segregated interfaces
+interface UserCardProps {
+  user: Pick<User, 'id' | 'name' | 'avatar'>;
+}
+
+interface EditableUserCardProps extends UserCardProps {
+  onEdit: () => void;
+  onDelete: () => void;
+}
+
+interface ContactInfoProps {
+  email?: string;
+  phone?: string;
+}
+```
+
+#### Dependency Inversion Principle (DIP)
+- Depend on abstractions (interfaces/types), not concrete implementations
+- Inject dependencies rather than hard-coding them
+- Use dependency injection for services and utilities
+```typescript
+// ❌ Avoid - Direct dependency
+const UserList = () => {
+  const fetchUsers = async () => {
+    return fetch('/api/users').then(res => res.json());
+  };
+  // ...
+};
+
+// ✅ Good - Abstracted dependency
+interface UserService {
+  getUsers: () => Promise<User[]>;
+}
+
+const UserList = ({ userService }: { userService: UserService }) => {
+  const { data } = useQuery({
+    queryKey: ['users'],
+    queryFn: userService.getUsers
+  });
+  // ...
+};
+```
+
