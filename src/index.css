@@ -1,2 +1,293 @@
 @import "tailwindcss";
 
+@theme {
+  /* ==================== COLORES ==================== */
+  /* Al usar --color-*, Tailwind crea automáticamente: text-sofka-primary, bg-sofka-primary, border-sofka-primary, etc. */
+  
+  /* Principales */
+  --color-sofka-primary: #FF7E08;
+  --color-sofka-primary-light: #FFA040;
+  --color-sofka-primary-dark: #E56F00;
+
+  /* Beige/Crema */
+  --color-sofka-beige-light: #F6F9F2;
+  --color-sofka-beige: #EFEAE4;
+  --color-sofka-beige-dark: #F0EAE3;
+
+  /* Grises */
+  --color-sofka-gray-light: #A6A6A6;
+  --color-sofka-gray: #333333;
+  --color-sofka-gray-dark: #000000;
+
+  /* Blancos */
+  --color-sofka-white: #FFFFFF;
+  --color-sofka-white-80: rgba(255, 255, 255, 0.8);
+
+  /* Otros */
+  --color-sofka-green: #16A34A;
+  
+  /* Colores Genéricos (del inicio de tu archivo original) */
+  --color-dark-gray: #EFECEC;
+  --color-yellow: #FFB800;
+  --color-corporate-orange: #FF6B00;
+  --color-light-gray: #E0E0E0;
+
+  /* ==================== SOMBRAS ==================== */
+  /* Genera automáticamente: shadow-sofka, shadow-sofka-lg */
+  --shadow-sofka: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-sofka-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+
+  /* ==================== ANIMACIONES ==================== */
+  /* Genera automáticamente: animate-fade-in, animate-slide-up */
+  --animate-fade-in: fadeIn 0.5s ease-in-out;
+  --animate-slide-up: slideUp 0.5s ease-out;
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  @keyframes slideUp {
+    from { transform: translateY(20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+  }
+}
+
+/* ==================== ESTILOS BASE ==================== */
+@layer base {
+  body {
+    @apply font-sans text-base antialiased;
+    color: var(--color-sofka-gray);
+    background-color: var(--color-sofka-white);
+  }
+  
+  /* Tipografía Personalizada */
+  .text-hero {
+    font-size: 96px;
+    line-height: 108px;
+    letter-spacing: -3px;
+    font-weight: 400;
+  }
+  
+  h1, h2, .text-display {
+    font-size: 46.88px;
+    line-height: 52.04px;
+    letter-spacing: -1.172px;
+    font-weight: 500;
+    color: var(--color-sofka-gray-dark);
+  }
+  
+  h3, .text-title {
+    font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
+    font-size: 30px;
+    line-height: 39.9px;
+    font-weight: 500;
+    color: var(--color-sofka-gray);
+  }
+  
+  h4 {
+    @apply text-xl font-medium;
+    color: var(--color-sofka-gray);
+  }
+  
+  h5, .text-small {
+    font-size: 14px;
+    line-height: 20px;
+    font-weight: 400;
+    color: var(--color-sofka-gray);
+  }
+  
+  p {
+    font-size: 16px;
+    line-height: 24px;
+    font-weight: 400;
+    color: var(--color-sofka-gray);
+  }
+  
+  a {
+    @apply transition-colors duration-200;
+    color: var(--color-sofka-gray);
+  }
+  
+  a:hover {
+    color: var(--color-sofka-primary);
+  }
+
+  /* Responsive Typography (Mantenido manual por especificidad de píxeles) */
+  @media (max-width: 768px) {
+    .text-hero {
+      font-size: 48px;
+      line-height: 56px;
+      letter-spacing: -1.5px;
+    }
+    h1, h2, .text-display {
+      font-size: 32px;
+      line-height: 40px;
+      letter-spacing: -0.8px;
+    }
+    h3, .text-title {
+      font-size: 24px;
+      line-height: 32px;
+    }
+  }
+}
+
+/* ==================== COMPONENTES ==================== */
+@layer components {
+  /* Botones */
+  .btn-primary {
+    @apply px-6 py-3 font-medium transition-all duration-300 rounded-lg;
+    @apply focus:outline-none focus:ring-2 focus:ring-offset-2;
+    background-color: var(--color-sofka-primary);
+    color: var(--color-sofka-white);
+    /* focus-ring-color se infiere o se puede definir manualmente */
+    --tw-ring-color: var(--color-sofka-primary); 
+  }
+  
+  .btn-primary:hover {
+    background-color: var(--color-sofka-primary-dark);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-sofka-lg);
+  }
+  
+  .btn-secondary {
+    @apply px-6 py-3 font-medium transition-all duration-300 rounded-lg;
+    @apply focus:outline-none focus:ring-2 focus:ring-offset-2;
+    background-color: var(--color-sofka-beige);
+    color: var(--color-sofka-gray);
+  }
+  
+  .btn-secondary:hover {
+    background-color: var(--color-sofka-beige-dark);
+  }
+  
+  .btn-outline {
+    @apply px-6 py-3 font-medium transition-all duration-300 rounded-lg;
+    @apply focus:outline-none focus:ring-2 focus:ring-offset-2;
+    background-color: transparent;
+    color: var(--color-sofka-primary);
+    border: 2px solid var(--color-sofka-primary);
+  }
+  
+  .btn-outline:hover {
+    background-color: var(--color-sofka-primary);
+    color: var(--color-sofka-white);
+  }
+  
+  /* Cards */
+  .card-sofka {
+    @apply p-6 transition-shadow duration-300 rounded-2xl;
+    background-color: var(--color-sofka-white);
+    box-shadow: var(--shadow-sofka);
+  }
+  
+  .card-sofka:hover {
+    box-shadow: var(--shadow-sofka-lg);
+  }
+  
+  .card-elevated {
+    @apply p-8 rounded-2xl;
+    background-color: var(--color-sofka-white);
+    box-shadow: var(--shadow-sofka-lg);
+  }
+  
+  /* Contenedores */
+  .container-sofka {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+  
+  .section-sofka {
+    @apply py-16 lg:py-24;
+  }
+  
+  .section-beige {
+    @apply py-16 lg:py-24;
+    background-color: var(--color-sofka-beige);
+  }
+  
+  .section-dark {
+    @apply py-16 lg:py-24;
+    background-color: var(--color-sofka-gray-dark);
+    color: var(--color-sofka-white);
+  }
+  
+  .section-dark h1, .section-dark h2, .section-dark h3, .section-dark p {
+    color: var(--color-sofka-white);
+  }
+  
+  /* Inputs */
+  .input-sofka {
+    @apply px-4 py-3 w-full transition-all duration-200 rounded-lg;
+    @apply focus:outline-none focus:ring-2;
+    border: 1px solid var(--color-sofka-gray-light);
+    background-color: var(--color-sofka-white);
+    color: var(--color-sofka-gray);
+  }
+  
+  .input-sofka:focus {
+    border-color: var(--color-sofka-primary);
+    --tw-ring-color: var(--color-sofka-primary);
+  }
+  
+  .input-sofka::placeholder {
+    color: var(--color-sofka-gray-light);
+  }
+  
+  /* Badges */
+  .badge-primary {
+    @apply inline-flex items-center px-3 py-1 text-sm font-medium rounded-lg;
+    background-color: var(--color-sofka-primary);
+    color: var(--color-sofka-white);
+  }
+  
+  .badge-secondary {
+    @apply inline-flex items-center px-3 py-1 text-sm font-medium rounded-lg;
+    background-color: var(--color-sofka-beige);
+    color: var(--color-sofka-gray);
+  }
+  
+  /* Navegación */
+  .nav-link {
+    @apply px-4 py-2 font-medium transition-colors duration-200;
+    color: var(--color-sofka-gray);
+  }
+  
+  .nav-link:hover {
+    color: var(--color-sofka-primary);
+  }
+  
+  .nav-link.active {
+    color: var(--color-sofka-primary);
+    border-bottom: 2px solid var(--color-sofka-primary);
+  }
+}
+
+/* ==================== UTILIDADES EXTRA ==================== */
+@layer utilities {
+  /* NOTA: Se han eliminado .text-sofka-*, .bg-sofka-*, .shadow-sofka 
+     porque Tailwind v4 las genera automáticamente gracias al @theme.
+  */
+
+  .text-sofka-muted {
+    color: var(--color-sofka-gray-light);
+    font-size: 14px;
+  }
+  
+  /* Gradientes personalizados (Estos son complejos, mejor mantenerlos manuales) */
+  .gradient-sofka {
+    background: linear-gradient(135deg, var(--color-sofka-primary) 0%, var(--color-sofka-primary-dark) 100%);
+  }
+  
+  .gradient-beige {
+    background: linear-gradient(135deg, var(--color-sofka-beige-light) 0%, var(--color-sofka-beige) 100%);
+  }
+
+  /* Espaciado */
+  .spacing-sofka {
+    @apply space-y-6;
+  }
+  
+  .spacing-sofka-lg {
+    @apply space-y-12;
+  }
+}
