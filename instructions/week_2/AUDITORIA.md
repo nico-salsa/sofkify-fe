@@ -228,4 +228,7 @@ La aplicación de principios SOLID, separación de capas y estandarización de c
 * Mayor facilidad de testing.
 * Evolución segura de la arquitectura.
 
+** Para a más detalle los cambios requeridos ver el documento CAMBIOS_REQUERIDOS.md 
+
 > **Estado de referencia arquitectónica establecido ✅**
+

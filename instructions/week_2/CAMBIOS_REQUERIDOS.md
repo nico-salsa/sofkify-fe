@@ -10,7 +10,7 @@ Estimación total: ~20 horas de desarrollo
 
 ## TIPOS E INTERFACES - CREAR/MODIFICAR
 
-### 1.1 src/types/product.ts (CREAR - CONSOLIDAR)
+### 1.1 src/types/product.ts (CREAR - CONSOLIDAR)  ✅ COMPLETADO
 
 **Estado actual:** Tipos dispersos en product.type.ts y api/types.ts
 **Cambio:** Crear archivo centralizado con modelos bien separados
@@ -34,7 +34,7 @@ Eliminar tipos duplicados de:
 
 ---
 
-### 1.2 src/types/user.types.ts (MODIFICAR)
+### 1.2 src/types/user.types.ts (MODIFICAR)  ✅ COMPLETADO
 
 **Estado actual:** Tiene User, LoginCredentials, RegisterData, AuthResponse
 
@@ -51,7 +51,7 @@ Eliminar tipos duplicados de:
 
 ---
 
-### 1.3 src/types/cart.types.ts (CREAR - NUEVO)
+### 1.3 src/types/cart.types.ts (CREAR - NUEVO)  ✅ COMPLETADO
 
 **Estado actual:** No existe; lógica dispersa en componentes
 
@@ -71,7 +71,7 @@ Eliminar tipos duplicados de:
 
 ## SERVICIOS - CREAR/MODIFICAR
 
-### 2.1 src/services/authService.ts (CREAR)
+### 2.1 src/services/authService.ts (CREAR)  ✅ COMPLETADO
 
 **Estado actual:** Lógica en [src/pages/Auth/Auth.tsx](src/pages/Auth/Auth.tsx) (console.log/setTimeout)
 
@@ -95,7 +95,6 @@ Lógica de autenticación mezclada con componente; sin abstracción de servicios
 Anti-patrón: Page with all logic
 
 **Patrones Recomendados:**
-- ✅ **Singleton Pattern**: Una única instancia del servicio en toda la app
 - ✅ **Service Layer Pattern**: Abstrae lógica de negocio (llamadas a API)
 - ✅ **Factory Pattern** (opcional): Para crear la instancia singleton de forma controlada
 - ✅ **Dependency Inversion Principle (SOLID)**: Inyectar a través de contexto/hooks, no instanciar en componentes
@@ -134,7 +133,7 @@ Anti-patrón: Page with all logic
 
 ---
 
-### 2.2 src/services/productService.ts (CREAR)
+### 2.2 src/services/productService.ts (CREAR)  ✅ COMPLETADO
 
 **Estado actual:** Datos mockeados en [src/api/products.ts](src/api/products.ts); hook sin abstracción en [src/api/useGetProducts.ts](src/api/useGetProducts.ts)
 
@@ -159,7 +158,7 @@ Anti-patrón: Page with all logic
 
 ---
 
-### 2.3 src/services/cartService.ts (CREAR)
+### 2.3 src/services/cartService.ts (CREAR)  ✅ COMPLETADO
 
 **Estado actual:** Lógica dispersa entre [src/pages/Cart/Cart.tsx](src/pages/Cart/Cart.tsx) y [src/components/ProductCartItem/ProductCartItem.tsx](src/components/ProductCartItem/ProductCartItem.tsx)
 
@@ -188,7 +187,7 @@ Anti-patrón: Page with all logic
 
 ## HOOKS PERSONALIZADOS - CREAR
 
-### 3.1 src/hooks/useAuth.ts (CREAR)
+### 3.1 src/hooks/useAuth.ts (CREAR)  ✅ COMPLETADO
 
 **Estado actual:** No existe; lógica en página
 
@@ -334,7 +333,7 @@ export const useCartContext = (): CartContextType
 
 ## VALIDADORES - CREAR
 
-### 5.1 src/validators/authValidation.ts (CREAR)
+### 5.1 src/validators/authValidation.ts (CREAR) ✅ COMPLETADO
 
 **Estado actual:** Validaciones inline en componentes
 
@@ -354,7 +353,7 @@ export const useCartContext = (): CartContextType
 
 ---
 
-### 5.2 src/validators/productValidation.ts (CREAR)
+### 5.2 src/validators/productValidation.ts (CREAR) 
 
 **Estado actual:** No existe
 
@@ -386,7 +385,7 @@ export const useCartContext = (): CartContextType
 
 ---
 
-### 6.2 src/utils/validators.ts (CREAR)
+### 6.2 src/utils/validators.ts (CREAR) ✅ COMPLETADO
 
 **Estado actual:** Regex dispersas en componentes
 
@@ -400,7 +399,7 @@ export const useCartContext = (): CartContextType
 
 ---
 
-### 6.3 src/utils/localStorage.ts (CREAR)
+### 6.3 src/utils/localStorage.ts (CREAR) ✅ COMPLETADO
 
 **Estado actual:** No existe
 
@@ -414,7 +413,7 @@ export const useCartContext = (): CartContextType
 
 ---
 
-### 6.4 src/config/api.config.ts (CREAR)
+### 6.4 src/config/api.config.ts (CREAR) ✅ COMPLETADO
 
 **Estado actual:** No existe
 
@@ -436,7 +435,7 @@ export const API_CONFIG = {
 
 ## COMPONENTES - MODIFICAR
 
-### 7.1 src/components/Auth/LoginForm.tsx (MODIFICAR)
+### 7.1 src/components/Auth/LoginForm.tsx (MODIFICAR) ✅ COMPLETADO
 
 **Cambios requeridos:**
 - Quitar validaciones inline → usar `loginSchema` de `authValidation.ts`
@@ -450,7 +449,7 @@ export const API_CONFIG = {
 
 ---
 
-### 7.2 src/components/Auth/RegisterForm.tsx (MODIFICAR)
+### 7.2 src/components/Auth/RegisterForm.tsx (MODIFICAR) ✅ COMPLETADO
 
 **Cambios requeridos:**
 - Quitar validaciones inline → `registerSchema`
@@ -464,7 +463,7 @@ export const API_CONFIG = {
 
 ---
 
-### 7.3 src/components/Auth/AuthImage.tsx (SIN CAMBIOS)
+### 7.3 src/components/Auth/AuthImage.tsx (SIN CAMBIOS) 
 
 **Estado:** Correcto, es presentacional puro
 
@@ -519,7 +518,7 @@ interface ProductProps {
 
 ---
 
-### 7.7 src/components/BurguerButton/BurguerButton.tsx (SIN CAMBIOS)
+### 7.7 src/components/BurguerButton/BurguerButton.tsx (SIN CAMBIOS) ✅ COMPLETADO
 
 **Estado:** Presentacional, está bien
 
@@ -579,9 +578,9 @@ export const FormButton: React.FC<FormButtonProps>
 
 ## PÁGINAS - MODIFICAR
 
-### 8.1 src/pages/Auth/Auth.tsx (MODIFICAR)
+### 8.1 src/pages/Auth/Auth.tsx (MODIFICAR) ✅ COMPLETADO
 
-**Estado actual:** Tiene lógica de login/register con console.log/setTimeout
+**Estado actual:** Tiene lógica de login/register 
 
 **Cambios:**
 - Quitar lógica local → usar `useAuth`
@@ -595,7 +594,7 @@ export const FormButton: React.FC<FormButtonProps>
 
 ---
 
-### 8.2 src/pages/Home/Home.tsx (MODIFICAR)
+### 8.2 src/pages/Home/Home.tsx (MODIFICAR) ✅ COMPLETADO
 
 **Estado actual:**
 ```tsx
@@ -740,6 +739,7 @@ Requerimientos:
 ### package.json - AGREGAR DEPENDENCIAS
 
 **Dependencias necesarias:**
+
 ```json
 {
   "zod": "^3.x.x",
