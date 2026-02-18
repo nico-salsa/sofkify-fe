@@ -39,10 +39,15 @@ git clone https://github.com/nico-salsa/Sofkify_BE.git
 cd Sofkify_BE
 
 # Instalar dependencias y ejecutar (Spring Boot con Maven)
+
+# En Linux/Mac:
 ./mvnw spring-boot:run
 
-# O en Windows:
-# mvnw.cmd spring-boot:run
+# En Windows CMD:
+mvnw.cmd spring-boot:run
+
+# En Windows PowerShell (IMPORTANTE: usar .\ antes del comando):
+.\mvnw.cmd spring-boot:run
 ```
 
 El backend se ejecutará en: `http://localhost:8080`
