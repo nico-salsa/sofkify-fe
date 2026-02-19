@@ -49,14 +49,22 @@ function mapToBackendRegisterFormat(data: CreateUserDTO) {
  */
 export const authApi = {
   /**
-   * Login - POST /auth/login
+   * Authenticates a user against the backend API.
+   *
+   * @param credentials login payload with email and password
+   * @returns backend auth response
+   * @throws Error when backend returns a non-2xx response
    */
   async login(credentials: LoginCredentials): Promise<AuthResponse> {
     return postRequest<AuthResponse>('/api/users/auth/login', credentials);
   },
 
   /**
-   * Register - POST /auth/register
+   * Registers a new user in the backend API.
+   *
+   * @param data registration payload from UI
+   * @returns backend auth response
+   * @throws Error when backend returns a non-2xx response
    */
   async register(data: CreateUserDTO): Promise<AuthResponse> {
     const backendData = mapToBackendRegisterFormat(data);
