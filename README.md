@@ -1,3 +1,127 @@
+# Sofkify E-commerce - Frontend
+
+Aplicación frontend para un MVP de microservicio de e-commerce con carrito de compras.
+
+## 🚀 Guía de Instalación Local
+
+Esta aplicación consta de **dos repositorios separados** que deben ejecutarse simultáneamente:
+
+- **Frontend**: https://github.com/nico-salsa/sofkify-fe.git (este repositorio)
+- **Backend**: https://github.com/nico-salsa/Sofkify_BE.git
+
+### Requisitos Previos
+
+- **Node.js** v18 o superior
+- **npm** v8 o superior
+- **Git**
+- **Java 17+** (para el backend)
+- **Maven** (para el backend)
+
+### Paso 1: Clonar los Repositorios
+
+Abre una terminal y ejecuta:
+
+```bash
+# Crear carpeta de proyecto (opcional)
+mkdir sofkify && cd sofkify
+
+# Clonar Frontend
+git clone https://github.com/nico-salsa/sofkify-fe.git
+
+# Clonar Backend
+git clone https://github.com/nico-salsa/Sofkify_BE.git
+```
+
+### Paso 2: Configurar e Iniciar el Backend
+
+```bash
+# Entrar a la carpeta del backend
+cd Sofkify_BE
+
+# Instalar dependencias y ejecutar (Spring Boot con Maven)
+
+# En Linux/Mac:
+./mvnw spring-boot:run
+
+# En Windows CMD:
+mvnw.cmd spring-boot:run
+
+# En Windows PowerShell (IMPORTANTE: usar .\ antes del comando):
+.\mvnw.cmd spring-boot:run
+```
+
+El backend se ejecutará en: `http://localhost:8080`
+
+> **Nota:** Consulta el README del repositorio Backend para instrucciones adicionales de configuración (base de datos, variables de entorno, etc.)
+
+### Paso 3: Configurar e Iniciar el Frontend
+
+Abre una **nueva terminal** (mantén el backend ejecutándose):
+
+```bash
+# Entrar a la carpeta del frontend
+cd sofkify-fe
+
+# Instalar dependencias
+npm install
+
+# Copiar archivo de variables de entorno
+cp .env.example .env
+
+# (Opcional) Edita .env si el backend está en otra URL
+# Por defecto: VITE_API_BASE_URL=http://localhost:8080
+
+# Iniciar servidor de desarrollo
+npm run dev
+```
+
+El frontend se ejecutará en: `http://localhost:5173`
+
+### Paso 4: Abrir la Aplicación
+
+Abre tu navegador y ve a: **http://localhost:5173**
+
+### Scripts Disponibles (Frontend)
+
+| Comando | Descripción |
+|---------|-------------|
+| `npm run dev` | Inicia el servidor de desarrollo |
+| `npm run build` | Compila la aplicación para producción |
+| `npm run preview` | Preview de la build de producción |
+| `npm run lint` | Ejecuta el linter (ESLint) |
+
+### Variables de Entorno
+
+| Variable | Descripción | Valor por defecto |
+|----------|-------------|-------------------|
+| `VITE_API_BASE_URL` | URL del servidor Backend | `http://localhost:8080` |
+
+### Estructura del Proyecto
+
+```
+sofkify-fe/
+├── src/
+│   ├── components/     # Componentes reutilizables
+│   ├── pages/          # Páginas de la aplicación
+│   ├── services/       # Servicios de API
+│   ├── hooks/          # Custom hooks
+│   ├── types/          # Tipos TypeScript
+│   └── utils/          # Utilidades
+├── public/             # Archivos estáticos
+└── instructions/       # Documentación del proyecto
+```
+
+### Solución de Problemas
+
+**Error de conexión al backend:**
+- Verifica que el backend esté corriendo en el puerto 8080
+- Revisa que `VITE_API_BASE_URL` en `.env` apunte a la URL correcta
+
+**Error de CORS:**
+- El backend debe permitir peticiones desde `http://localhost:5173`
+
+---
+
 # 0. Editores de código apalancador con la IA
  - Intellisense con Windsurf
  - VSCode usado con Git Hub Copilot y Claude Desktop, usando MCP's

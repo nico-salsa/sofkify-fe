@@ -3,6 +3,11 @@ import ProductCartItem from '../../components/ProductCartItem/ProductCartItem';
 import { cartItems } from './data';
 import type { CartItem } from '../../types/cart.types';
 
+/**
+ * Renders the cart summary view using local mock data.
+ *
+ * This component currently displays items, total amount, and total quantity.
+ */
 const Cart: React.FC = () => {
   const [items, setItems] = React.useState<CartItem[]>([]);
 
