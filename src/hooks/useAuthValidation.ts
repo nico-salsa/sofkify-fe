@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, type ChangeEvent, type FocusEvent, type FormEvent } from 'react';
 
 interface UseAuthValidationProps<T> {
     initialState: T;
@@ -6,7 +6,7 @@ interface UseAuthValidationProps<T> {
     onSubmit: (data: T) => Promise<void> | void;
 }
 
-export function useAuthValidation<T extends Record<string, any>>({
+export function useAuthValidation<T extends Record<string, unknown>>({
     initialState,
     validate,
     onSubmit,
@@ -17,7 +17,7 @@ export function useAuthValidation<T extends Record<string, any>>({
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     const handleChange = useCallback(
-        (e: React.ChangeEvent<HTMLInputElement>) => {
+        (e: ChangeEvent<HTMLInputElement>) => {
             const { name, value } = e.target;
             setFormData((prev) => {
                 const newData = { ...prev, [name]: value };
@@ -38,7 +38,7 @@ export function useAuthValidation<T extends Record<string, any>>({
     );
 
     const handleBlur = useCallback(
-        (e: React.FocusEvent<HTMLInputElement>) => {
+        (e: FocusEvent<HTMLInputElement>) => {
             const { name } = e.target;
             setTouched((prev) => ({ ...prev, [name]: true }));
 
@@ -51,7 +51,7 @@ export function useAuthValidation<T extends Record<string, any>>({
         [formData, validate]
     );
 
-    const handleSubmit = async (e: React.FormEvent) => {
+    const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
         setIsSubmitting(true);
 
@@ -66,7 +66,7 @@ export function useAuthValidation<T extends Record<string, any>>({
         if (Object.keys(validationErrors).length === 0) {
             try {
                 await onSubmit(formData);
-            } catch (error) {
+            } catch {
                 // Manejo de errores externos (API) si fuera necesario
             }
         }

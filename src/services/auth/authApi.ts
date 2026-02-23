@@ -13,7 +13,7 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080
  * Función auxiliar para hacer POST requests
  * Centraliza la configuración de fetch
  */
-async function postRequest<T>(endpoint: string, body: any): Promise<T> {
+async function postRequest<T>(endpoint: string, body: Record<string, unknown>): Promise<T> {
   const response = await fetch(`${API_BASE_URL}${endpoint}`, {
     method: 'POST',
     headers: {
