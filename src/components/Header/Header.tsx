@@ -2,8 +2,10 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import cartIcon from '/lineicons_cart-2.svg';
 import type { IHeaderProps } from './types';
+import { useCart } from '../../hooks/useCart';
 
 const Header: React.FC<IHeaderProps> = ({ navbarItems }) => {
+  const { totalQuantity } = useCart();
   return (
     <header className="bg-dark-gray h-14 flex items-center justify-center max-md:hidden">
       <nav className="max-w-286 mx-auto flex items-center w-11/12">
@@ -27,9 +29,14 @@ const Header: React.FC<IHeaderProps> = ({ navbarItems }) => {
               </Link>
             </li>
           ))}
-           <li className="h-6">
-            <Link to="/cart" className="block h-full">
+           <li className="h-6 relative">
+            <Link to="/cart" className="block h-full relative">
               <img src={cartIcon} alt="Cart Icon" className="h-full w-auto object-contain" />
+              {totalQuantity > 0 && (
+                <span className="absolute -top-2 -right-2 bg-corporate-orange text-white text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center">
+                  {totalQuantity}
+                </span>
+              )}
             </Link>
           </li>
 
