@@ -1,14 +1,17 @@
 import type { ProductDTO, Product } from '../../types/product';
-import { cartItems } from './products';
 
 /**
  * ProductService - Service layer for product operations
  * Responsibilities:
- * - API calls (currently mocked)
+ * - API calls to Product Service (port 8081, /api context)
  * - DTO → Product transformation
  * - Error handling
  * - Future: Caching/optimization
  */
+
+// Product Service URL configuration
+const PRODUCT_SERVICE_URL = import.meta.env.VITE_PRODUCT_SERVICE_URL || 'http://localhost:8081';
+const PRODUCT_API_ENDPOINT = `${PRODUCT_SERVICE_URL}/api/products`;
 
 /**
  * Transforms ProductDTO from API to internal Product model
@@ -21,38 +24,45 @@ const transformProductDTOToProduct = (dto: ProductDTO): Product => {
 };
 
 /**
- * Get all products from API
+ * Get all products from Product Service API
+ * GET /api/products (with optional status filter)
  * @returns Promise with array of ProductDTO
  */
 export const getAllProducts = async (): Promise<ProductDTO[]> => {
   try {
-    // TODO: Replace with real API call
-    // const response = await fetch(`${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.PRODUCTS}`);
-    // return await response.json();
-    console.log(cartItems);
-    // Simulate API delay
-    await new Promise((resolve) => setTimeout(resolve, 300));
-    return cartItems;
+    const response = await fetch(`${PRODUCT_API_ENDPOINT}?status=ACTIVE`);
+    
+    if (!response.ok) {
+      throw new Error(`Product Service error: ${response.status}`);
+    }
+
+    const data = await response.json();
+    return Array.isArray(data) ? data : data.products || [];
   } catch (error) {
-    console.error('Error fetching products:', error);
+    console.error('Error fetching products from Product Service:', error);
     throw new Error('Failed to fetch products');
   }
 };
 
 /**
  * Get a single product by ID
+ * GET /api/products/{productId}
  * @param id - Product ID
  * @returns Promise with ProductDTO or null if not found
  */
 export const getProductById = async (id: string): Promise<ProductDTO | null> => {
   try {
-    // TODO: Replace with real API call
-    // const response = await fetch(`${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.PRODUCTS}/${id}`);
-    // return await response.json();
+    const response = await fetch(`${PRODUCT_API_ENDPOINT}/${id}`);
     
-    await new Promise((resolve) => setTimeout(resolve, 200));
-    const product = cartItems.find((item) => item.id === id);
-    return product || null;
+    if (response.status === 404) {
+      return null;
+    }
+
+    if (!response.ok) {
+      throw new Error(`Product Service error: ${response.status}`);
+    }
+
+    return await response.json();
   } catch (error) {
     console.error(`Error fetching product ${id}:`, error);
     throw new Error(`Failed to fetch product ${id}`);
@@ -61,22 +71,25 @@ export const getProductById = async (id: string): Promise<ProductDTO | null> => 
 
 /**
  * Search products by query string
+ * GET /api/products with search query params
  * @param query - Search term
  * @returns Promise with filtered ProductDTO array
  */
 export const searchProducts = async (query: string): Promise<ProductDTO[]> => {
   try {
-    // TODO: Replace with real API call with query params
-    // const response = await fetch(`${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.PRODUCTS}?search=${query}`);
-    // return await response.json();
+    const searchParams = new URLSearchParams({
+      search: query,
+      status: 'ACTIVE',
+    });
+
+    const response = await fetch(`${PRODUCT_API_ENDPOINT}?${searchParams.toString()}`);
     
-    await new Promise((resolve) => setTimeout(resolve, 250));
-    const lowerQuery = query.toLowerCase();
-    return cartItems.filter(
-      (item) =>
-        item.name.toLowerCase().includes(lowerQuery) ||
-        item.description.toLowerCase().includes(lowerQuery)
-    );
+    if (!response.ok) {
+      throw new Error(`Product Service error: ${response.status}`);
+    }
+
+    const data = await response.json();
+    return Array.isArray(data) ? data : data.products || [];
   } catch (error) {
     console.error('Error searching products:', error);
     throw new Error('Failed to search products');
