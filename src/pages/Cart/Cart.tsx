@@ -76,7 +76,7 @@ const Cart: React.FC = () => {
         <div className="text-center py-12">
           <p className="text-xl text-gray-500 mb-4">Tu carrito está vacío</p>
           <button
-            onClick={() => navigate('/products')}
+            onClick={() => navigate('/product')}
             className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded"
           >
             Continuar comprando
@@ -165,7 +165,7 @@ const Cart: React.FC = () => {
           {/* Action Buttons */}
           <div className="flex gap-4 justify-end">
             <button
-              onClick={() => navigate('/products')}
+              onClick={() => navigate('/product')}
               className="px-6 py-3 bg-gray-600 hover:bg-gray-700 text-white font-bold rounded transition"
               disabled={isLoading}
             >
