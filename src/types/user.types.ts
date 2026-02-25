@@ -18,7 +18,7 @@ export interface CreateUserDTO extends User {
   password: string;
 }
 //interfaz para esperar la respuesta la respuesta del usuario 
-export interface UserResponse extends UserDTO { }
+export type UserResponse = UserDTO;
 
 export interface LoginCredentials {
   email: string;

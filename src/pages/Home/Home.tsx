@@ -1,12 +1,13 @@
-import React, { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import Product from '../../components/Product/Product';
 import { getAllProducts } from '../../services/products/productService';
+import type { ProductDTO } from '../../types/product';
 
 const Home: React.FC = () => {
   //const { products, loading, error } = useGetProducts();
-  const [products, setProducts] = React.useState<any[]>([]);
-  const [loading, setLoading] = React.useState(true);
-  const [error, setError] = React.useState<string | null>(null);
+  const [products, setProducts] = useState<ProductDTO[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchProducts = async () => {

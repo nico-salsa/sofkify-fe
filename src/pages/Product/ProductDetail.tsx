@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import type { ProductDTO } from '../../types/product';
 import { getAllProducts } from '../../services/products/productService';
+import { useCart } from '../../hooks/useCart';
+import Swal from 'sweetalert2';
 
 type UseGetProductsReturn = {
   products: ProductDTO[];
@@ -42,8 +44,10 @@ const ProductDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { products, loading: productsLoading, error } = useGetProducts();
+  const { addItem } = useCart();
   const [product, setProduct] = useState<ProductDTO | null>(null);
   const [qty, setQty] = useState(1);
+  const [isAdding, setIsAdding] = useState(false);
 
   useEffect(() => {
     if (!productsLoading && products.length > 0) {
@@ -78,6 +82,42 @@ const ProductDetail: React.FC = () => {
     );
   }
 
+  const handleAddToCart = async () => {
+    if (qty <= 0) {
+      Swal.fire('Error', 'La cantidad debe ser mayor a 0', 'error');
+      return;
+    }
+
+    setIsAdding(true);
+    try {
+      addItem({
+        id: product.id,
+        name: product.name,
+        image: product.image,
+        description: product.description,
+        price: product.price,
+        stock: product.stock,
+        quantity: qty,
+        subtotal: product.price * qty,
+      });
+
+      Swal.fire({
+        title: '¡Agregado al carrito!',
+        text: `${qty} x ${product.name}`,
+        icon: 'success',
+        timer: 2000,
+        showConfirmButton: false,
+      });
+
+      setQty(1);
+    } catch (err) {
+      Swal.fire('Error', 'No se pudo agregar el producto', 'error');
+      console.error('[ProductDetail] Error adding to cart:', err);
+    } finally {
+      setIsAdding(false);
+    }
+  };
+
   return (
     <div className="container-sofka px-4 py-8">
       <div className="grid grid-cols-12 gap-6 items-start">
@@ -102,9 +142,30 @@ const ProductDetail: React.FC = () => {
           </div>
 
           <div className="flex gap-3">
-            <button className="btn-primary" onClick={() => alert('Añadido al carrito (mock)')}>Agregar al carrito</button>
-            <button className="btn-outline" onClick={() => alert('Comprar ahora (mock)')}>Comprar ahora</button>
+            <button 
+              className="btn-primary disabled:opacity-50 disabled:cursor-not-allowed" 
+              onClick={handleAddToCart}
+              disabled={isAdding || product.stock === 0}
+            >
+              {isAdding ? 'Agregando...' : 'Agregar al carrito'}
+            </button>
+            <button 
+              className="btn-outline disabled:opacity-50 disabled:cursor-not-allowed" 
+              onClick={() => {
+                handleAddToCart();
+                navigate('/cart');
+              }}
+              disabled={isAdding || product.stock === 0}
+            >
+              {isAdding ? 'Procesando...' : 'Comprar ahora'}
+            </button>
           </div>
+
+          {product.stock === 0 && (
+            <div className="mt-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
+              Producto agotado
+            </div>
+          )}
         </div>
       </div>
     </div>

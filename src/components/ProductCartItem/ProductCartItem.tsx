@@ -1,61 +1,104 @@
-import React from 'react';
-import  type { CartItem } from '../../types/cart.types';
-import { useState } from 'react';
-/* export interface ProductCartItemProps {
-  item: CartItem;
+import React, { useEffect, useState } from 'react';
+import type { CartItem } from '../../types/cart.types';
+
+interface ProductCartItemProps extends CartItem {
+  onUpdateQuantity?: (quantity: number) => void;
+  onRemoveItem?: (productId: string) => void;
 }
- */
-const ProductCartItem: React.FC<CartItem> = ({ quantity, subtotal, onRemove, onIncrease, onDecrease, ...item  }) => {
-  const [cartQuantity, setCartQuantity] = useState<number>(0);
+
+const ProductCartItem: React.FC<ProductCartItemProps> = ({
+  id,
+  name,
+  image,
+  price,
+  quantity,
+  stock,
+  onUpdateQuantity,
+  onRemoveItem,
+}) => {
+  const [cartQuantity, setCartQuantity] = useState<number>(quantity);
+
+  // Sincronizar cantidad con las props cuando cambia
+  useEffect(() => {
+    setCartQuantity(quantity);
+  }, [quantity]);
 
   const handleDecrease = () => {
-    // Solo disminuir si la cantidad es mayor a 0 y si existe la función
-      setCartQuantity(prev => prev > 0 ? prev - 1 : 0);
+    const newQty = Math.max(1, cartQuantity - 1);
+    setCartQuantity(newQty);
+    if (onUpdateQuantity) {
+      onUpdateQuantity(newQty);
+    }
   };
 
   const handleIncrease = () => {
-    // Solo aumentar si no excede el stock disponible y si existe la función
-      setCartQuantity(prev=>prev+1);
+    if (cartQuantity < stock) {
+      const newQty = cartQuantity + 1;
+      setCartQuantity(newQty);
+      if (onUpdateQuantity) {
+        onUpdateQuantity(newQty);
+      }
+    }
   };
+
+  const handleRemove = () => {
+    if (onRemoveItem) {
+      onRemoveItem(id);
+    }
+  };
+  const itemTotal = price * cartQuantity;
+
   return (
     <div className="flex items-center gap-4 p-4 border-b border border-sofka-primary rounded-2xl">
-      <img src={item.image} alt={item.name} className="w-20 h-20 object-contain rounded" /> 
+      <img src={image} alt={name} className="w-20 h-20 object-contain rounded" />
 
       <div className="flex-1">
         <div className="flex items-start justify-between">
-            <h3 className="text-sm font-medium">{item.name}</h3>
-            {onRemove && (
-              <button
-                onClick={() => onRemove(item.id)}
-                aria-label={`Remove ${item.name}`}
-                //className="text-sm text-red-600 hover:underline ml-4"
-              >
-                Quitar
-              </button>
-            )}
-          </div>
+          <h3 className="text-sm font-medium">{name}</h3>
+          {onRemoveItem && (
+            <button
+              onClick={handleRemove}
+              aria-label={`Remove ${name}`}
+              className="text-sm text-red-600 hover:text-red-800 font-medium"
+            >
+              ✕ Quitar
+            </button>
+          )}
+        </div>
 
-        <div className="mt-2  flex items-center gap-4">
+        <div className="mt-2 flex items-center gap-4">
           <div className="flex max-w-24 items-center border rounded overflow-hidden">
             <button
               onClick={handleDecrease}
-              className={`px-3 py-1 w-1/3 bg-gray-100 hover:bg-gray-200`}
-              aria-label={`Decrease ${item.name}`}
+              disabled={cartQuantity <= 1}
+              className="px-3 py-1 w-1/3 bg-gray-100 hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              aria-label={`Decrease ${name}`}
             >
-              -
+              −
             </button>
-            <input type='text' className=" w-1/3 py-1 bg-white text-center" value={cartQuantity} />
+            <input
+              type="number"
+              className="w-1/3 py-1 bg-white text-center border-0 outline-none"
+              value={cartQuantity}
+              readOnly
+              min="1"
+              max={stock}
+            />
             <button
               onClick={handleIncrease}
-              className={`px-3 py-1 w-1/3 bg-gray-100 hover:bg-gray-200`}
-              aria-label={`Increase ${item.name}`}
+              disabled={cartQuantity >= stock}
+              className="px-3 py-1 w-1/3 bg-gray-100 hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              aria-label={`Increase ${name}`}
             >
               +
             </button>
           </div>
-          <div className='flex flex-col ml-auto'>  
-            <p className="text-sm text-gray-700 ">Precio: ${item.price.toFixed(2)}</p>
-            <p className="text-sm font-semibold">Total: ${(item.price * quantity).toFixed(2)}</p>
+          <div className="flex flex-col ml-auto text-right">
+            <p className="text-sm text-gray-700">Precio: ${price.toFixed(2)}</p>
+            <p className="text-sm font-semibold text-corporate-orange">Subtotal: ${itemTotal.toFixed(2)}</p>
+            {cartQuantity === stock && stock > 0 && (
+              <p className="text-xs text-orange-500 mt-1">Max disponible</p>
+            )}
           </div>
         </div>
       </div>

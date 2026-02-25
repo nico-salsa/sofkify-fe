@@ -23,7 +23,7 @@ const Auth: React.FC = () => {
     try {
       await loginHook.login(data);
       navigate('/');
-    } catch (err) {
+    } catch {
       // Error already handled by hook
     }
   };
@@ -32,7 +32,7 @@ const Auth: React.FC = () => {
     try {
       await registerHook.register(data);
       navigate('/');
-    } catch (err) {
+    } catch {
       // Error already handled by hook
     }
   };

@@ -17,7 +17,7 @@ export interface ProductDTO extends Omit<Product, 'status'> {
 }
 
 //interfaz para mostrar el producto
-export interface ProductPresentation extends Product {}
+export type ProductPresentation = Product;
 
 // ============================================
 // Component Props Types
