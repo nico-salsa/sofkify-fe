@@ -17,16 +17,24 @@ const CART_SERVICE_URL = import.meta.env.VITE_CART_SERVICE_URL || 'http://localh
 const CART_API_ENDPOINT = `${CART_SERVICE_URL}/api/carts`;
 
 /**
- * Obtiene el Customer ID desde el token o authStorage
+ * Obtiene el Customer ID desde localStorage
+ * Si no existe, genera un UUID temporal
  */
 function getCustomerId(): string {
-  const token = authStorage.getToken();
-  if (!token) {
-    throw new Error('User not authenticated');
+  let customerId = localStorage.getItem('customerId');
+  
+  if (!customerId) {
+    // Generar UUID v4 temporal si no existe
+    customerId = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+      const r = (Math.random() * 16) | 0;
+      const v = c === 'x' ? r : (r & 0x3) | 0x8;
+      return v.toString(16);
+    });
+    localStorage.setItem('customerId', customerId);
+    console.log('[cartApi] Generated temporary customer ID:', customerId);
   }
-  // TODO: Parsear el token JWT para extraer el customerId
-  // Por ahora usar una versión simplificada
-  return localStorage.getItem('userId') || '';
+  
+  return customerId;
 }
 
 /**
@@ -45,6 +53,8 @@ export const cartApi = {
 		try {
 			const customerId = getCustomerId();
 
+			console.log('[cartApi] Adding item to cart:', { customerId, item });
+
 			const response = await fetch(`${CART_API_ENDPOINT}/items`, {
 				method: 'POST',
 				headers: {
@@ -59,11 +69,14 @@ export const cartApi = {
 			});
 
 			if (!response.ok) {
-				const error = await response.json();
-				throw new Error(error.message || 'Failed to add item to cart');
+				const error = await response.json().catch(() => ({}));
+				console.error('[cartApi] Failed to add item:', { status: response.status, error });
+				throw new Error(error.message || `Failed to add item to cart (${response.status})`);
 			}
+
+			console.log('[cartApi] Item added successfully');
 		} catch (err) {
-			console.error('Error adding item to cart:', err);
+			console.error('[cartApi] Error adding item to cart:', err);
 			throw err;
 		}
 	},
@@ -79,6 +92,8 @@ export const cartApi = {
 		try {
 			const customerId = getCustomerId();
 
+			console.log('[cartApi] Fetching active cart for customer:', customerId);
+
 			const response = await fetch(CART_API_ENDPOINT, {
 				method: 'GET',
 				headers: {
@@ -87,12 +102,16 @@ export const cartApi = {
 			});
 
 			if (!response.ok) {
-				throw new Error('Failed to fetch active cart');
+				const error = await response.json().catch(() => ({}));
+				console.error('[cartApi] Failed to fetch active cart:', { status: response.status, error });
+				throw new Error(error.message || `Failed to fetch active cart (${response.status})`);
 			}
 
-			return await response.json();
+			const data = await response.json();
+			console.log('[cartApi] Active cart fetched:', data);
+			return data;
 		} catch (err) {
-			console.error('Error fetching active cart:', err);
+			console.error('[cartApi] Error fetching active cart:', err);
 			throw err;
 		}
 	},
@@ -106,21 +125,28 @@ export const cartApi = {
 	 */
 	async getCartById(cartId: string): Promise<any> {
 		try {
+			console.log('[cartApi] Fetching cart by ID:', cartId);
+
 			const response = await fetch(`${CART_API_ENDPOINT}/${cartId}`, {
 				method: 'GET',
 			});
 
 			if (response.status === 404) {
+				console.warn('[cartApi] Cart not found:', cartId);
 				return null;
 			}
 
 			if (!response.ok) {
-				throw new Error('Failed to fetch cart');
+				const error = await response.json().catch(() => ({}));
+				console.error('[cartApi] Failed to fetch cart:', { status: response.status, error });
+				throw new Error(error.message || `Failed to fetch cart (${response.status})`);
 			}
 
-			return await response.json();
+			const data = await response.json();
+			console.log('[cartApi] Cart fetched:', data);
+			return data;
 		} catch (err) {
-			console.error('Error fetching cart by ID:', err);
+			console.error('[cartApi] Error fetching cart by ID:', err);
 			throw err;
 		}
 	},
@@ -134,6 +160,8 @@ export const cartApi = {
 	 */
 	async updateItemQuantity(cartItemId: string, quantity: number): Promise<void> {
 		try {
+			console.log('[cartApi] Updating item quantity:', { cartItemId, quantity });
+
 			const response = await fetch(`${CART_API_ENDPOINT}/items/${cartItemId}`, {
 				method: 'PUT',
 				headers: {
@@ -143,11 +171,14 @@ export const cartApi = {
 			});
 
 			if (!response.ok) {
-				const error = await response.json();
-				throw new Error(error.message || 'Failed to update item quantity');
+				const error = await response.json().catch(() => ({}));
+				console.error('[cartApi] Failed to update item quantity:', { status: response.status, error });
+				throw new Error(error.message || `Failed to update item quantity (${response.status})`);
 			}
+
+			console.log('[cartApi] Item quantity updated successfully');
 		} catch (err) {
-			console.error('Error updating item quantity:', err);
+			console.error('[cartApi] Error updating item quantity:', err);
 			throw err;
 		}
 	},
@@ -160,16 +191,21 @@ export const cartApi = {
 	 */
 	async removeItem(cartItemId: string): Promise<void> {
 		try {
+			console.log('[cartApi] Removing item from cart:', cartItemId);
+
 			const response = await fetch(`${CART_API_ENDPOINT}/items/${cartItemId}`, {
 				method: 'DELETE',
 			});
 
 			if (!response.ok) {
-				const error = await response.json();
-				throw new Error(error.message || 'Failed to remove item from cart');
+				const error = await response.json().catch(() => ({}));
+				console.error('[cartApi] Failed to remove item:', { status: response.status, error });
+				throw new Error(error.message || `Failed to remove item (${response.status})`);
 			}
+
+			console.log('[cartApi] Item removed successfully');
 		} catch (err) {
-			console.error('Error removing item from cart:', err);
+			console.error('[cartApi] Error removing item:', err);
 			throw err;
 		}
 	},
