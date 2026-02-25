@@ -30,7 +30,7 @@ const OrderSuccessPage: React.FC = () => {
 	// Validar autenticación
 	useEffect(() => {
 		if (!isAuthenticated) {
-			navigate('/auth/login');
+			navigate('/auth');
 		}
 	}, [isAuthenticated, navigate]);
 

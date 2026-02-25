@@ -17,7 +17,8 @@ export interface UserDTO extends User {
 export interface CreateUserDTO extends User {
   password: string;
 }
-//interfaz para esperar la respuesta la respuesta del usuario 
+
+// interfaz para esperar la respuesta del usuario
 export type UserResponse = UserDTO;
 
 export interface LoginCredentials {
@@ -29,10 +30,30 @@ export type RegisterData = CreateUserDTO;
 
 export type AuthMode = 'login' | 'register';
 
-export interface AuthResponse {
+export interface LoginResponse {
   success: boolean;
   message: string;
-  data?: UserResponse;
+  userId?: string;
+  email?: string;
+  name?: string;
+  role?: string;
 }
 
 export type Status = 'active' | 'eliminated';
+
+export interface RegisterResponse {
+  id: string;
+  email: string;
+  name: string;
+  role: string;
+  status: string;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface AuthSessionUser {
+  id: string;
+  email: string;
+  name?: string;
+  role?: string;
+}

@@ -28,7 +28,7 @@ export interface ConfirmCartResponse {
 	success: boolean;
 	cartId: string;
 	confirmedAt: string; // ISO8601
-	orderId: string; // UUID
+	message?: string;
 }
 
 export interface CartConfirmationError {
