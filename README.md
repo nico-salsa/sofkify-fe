@@ -1,222 +1,82 @@
-# 0. Editores de código apalancador con la IA
- - Intellisense con Windsurf
- - VSCode usado con Git Hub Copilot y Claude Desktop, usando MCP's
+# Sofkify Frontend (sofkify-fe)
 
-# 1. Instrucciones generales y equipo de trabajo
+Frontend React + Vite para Sofkify.
 
-## 1.1. Formación de equipo y comunicación
+- Repo BE: `https://github.com/nico-salsa/Sofkify_BE.git`
+- Path local BE esperado: `C:\Sofka_U_Semana_2\Sofkify_BE`
 
-### Roles
+## Requisitos
 
-| Sofkiano  | Rol  |
-| ------------- | ------------- |
-| Juan David Franco | Frontend Developer  |
-| Omar Ortiz| Frontend Developer   |
-| Santiago Angarita  | Backend Developer |
-| Javier Luis  | Backend Developer |
+- Node.js 20+
+- npm 10+
+- Backend levantado (recomendado por Docker Compose desde `Sofkify_BE`)
 
-Cada miembro del equipo de trabajo en el frontend y en el backend revisan mutuamente las contribuciones
+## Configuracion local
 
-### Canales de comunicación
+1. Crear `.env` desde plantilla:
 
-- WhatsApp
-- Reuniones con Meet
-
-## 1.2. Definición de marco de trabajo AI (Investigación)
-
-✅ Metodología
-El proyecto adopta una metodología de Desarrollo Guiado por Arquitectura con Asistencia de IA, donde la IA actúa como un desarrollador técnico bajo la dirección del arquitecto del proyecto.
-La IA no se usa de forma libre, sino mediante un proceso estructurado que parte siempre del contexto del proyecto, las historias de usuario y las instrucciones de arquitectura definidas por el arquitecto.
-El ciclo base de trabajo es:
-Arquitecto define junto con IA → IA implementa → Arquitecto valida → IA ajusta → Arquitecto aprueba con pares.
-La IA se utiliza de manera distinta según la fase:
-
-### 📌 Planificación
-En planificación se construye el entendimiento del sistema usando IA fuera del editor.
-
-**Actividades**:
-Redacción del contexto del proyecto.
-
-Definición del flujo funcional.
-
-Creación de historias de usuario.
-
-Identificación de requisitos funcionales y no funcionales.
-
-Ajuste y validación de las historias con un par.
-
-La IA se usa como asistente para estructurar ideas, proponer redacciones y refinar el modelo del dominio, pero la versión final es siempre validada por el arquitecto.
-Entregables:
-Documento de contexto.
-
-Historias de usuario.
-
-Instrucciones de arquitectura y buenas prácticas.
-
-### 📌 Desarrollo
-El desarrollo se realiza historia por historia.
-Actividades:
-El arquitecto entrega a la IA:
-
-Historia de usuario.
-
-Contexto técnico.
-
-Lineamientos de arquitectura.
-
-La IA genera un Plan de Implementación por historia, indicando:
-
-Capas afectadas.
-
-Componentes a crear.
-
-Flujos técnicos.
-
-La IA propone el código alineado a dichos lineamientos.
-
-El arquitecto revisa diseño, coherencia y calidad.
-
-La IA ajusta según feedback.
-
-Solo después se integra al repositorio.
-
-La IA no escribe código sin referencia a una historia de usuario ni sin respetar las instrucciones de arquitectura del proyecto.
-
-### 📌 QA
-
-La fase de QA valida que cada historia implementada funcione correctamente.
-Actividades:
-La IA propone:
-
-Casos de prueba.
-
-Tests unitarios.
-
-Escenarios de error.
-
-El arquitecto ejecuta y revisa:
-
-Flujos funcionales.
-
-Manejo de excepciones.
-
-Integración con RabbitMQ.
-
-Se reportan fallos.
-
-La IA corrige y mejora el código.
-
-La historia se marca como lista solo después de pasar validación.
-
-La IA se usa para acelerar la creación de pruebas, pero la verificación final es humana.
-
-### 📌 Despliegue (Instalación)
-En despliegue se prepara el sistema para ejecución.
-Actividades:
-El arquitecto solicita a la IA:
-
-Guía de instalación.
-
-Configuración de entorno.
-
-Scripts de ejecución.
-
-Dockerización.
-
-La IA genera los pasos.
-
-El arquitecto prueba el proceso en un entorno limpio.
-
-Se corrigen errores de configuración.
-
-Se documenta el procedimiento final.
-
-La IA apoya el proceso, pero el arquitecto valida que el sistema quede realmente operativo.
-
-### ✅ Interacciones Clave
-
-Las interacciones con la IA están ligadas directamente al flujo del proyecto:
-Definir historias de usuario.
-
-Diseñar arquitectura y eventos RabbitMQ.
-
-Crear planes de implementación.
-
-Generar código backend y frontend.
-
-Crear tests.
-
-Refactorizar.
-
-Documentar.
-
-Cada interacción debe partir de:
-Contexto del proyecto.
-
-Historia de usuario.
-
-Lineamientos de arquitectura.
-
-Restricciones técnicas.
-
-Formato esperado.
-
-Ejemplo real de interacción:
-“Con base en la HU-BE-MVP-05 y las instrucciones de arquitectura, genera el servicio de creación de órdenes usando Spring Boot y publicando un evento RabbitMQ.”
-
-✅ Documentos Clave y Contextualización
-El proyecto mantiene documentos base que siempre se usan como contexto para interactuar con la IA:
-Documento de contexto del proyecto.
-
-Historias de usuario.
-
-Instrucciones de arquitectura.
-
-Antes de pedir trabajo a la IA, el arquitecto proporciona:
+```powershell
+cd C:\Sofka_U_Semana_2\sofkify-fe
+Copy-Item .env.example .env
 ```
-Qué se está construyendo.
 
-En qué capa.
+2. Instalar dependencias:
 
-
-Qué restricciones aplicar.
-
-
-Qué ya existe en el código.
+```powershell
+npm ci
 ```
-Esto evita soluciones genéricas y mantiene coherencia entre entregables.
 
-✅ Dinámicas de Interacción
-La relación Arquitecto–IA se maneja como si la IA fuera un miembro técnico del equipo.
-Dinámica:
-El arquitecto define la tarea.
+3. Ejecutar en desarrollo:
 
-Se entrega contexto y HU.
+```powershell
+npm run dev
+```
 
-La IA propone solución.
+App disponible en `http://localhost:5173`.
 
-El arquitecto revisa.
+## Variables de entorno
 
-Se devuelve feedback.
+- `VITE_USERS_API_URL` (default `http://localhost:8080/api`)
+- `VITE_PRODUCTS_API_URL` (default `http://localhost:8081/api`)
+- `VITE_CARTS_API_URL` (default `http://localhost:8083/api`)
+- `VITE_ORDERS_API_URL` (default `http://localhost:8082/api`)
+- `VITE_HTTP_TIMEOUT_MS` (default `10000`)
 
-La IA ajusta.
+## Modo integrado con Docker (recomendado)
 
-Se valida.
+Desde backend:
 
-Se integra.
+```powershell
+cd C:\Sofka_U_Semana_2\Sofkify_BE
+docker compose -f docker-compose.yml -f docker-compose.integration.yml up -d --build
+```
 
-### Reglas:
+Esto levanta frontend y backend en la misma red Docker.
 
-La IA no toma decisiones finales.
+## Verificacion de requests HTTP reales
 
-Ningún código entra sin revisión.
+1. Abrir la app en `http://localhost:5173`.
+2. Abrir DevTools del navegador (Console).
+3. Ejecutar flujo: login, listar productos, agregar al carrito, confirmar carrito, crear orden.
+4. Verificar logs frontend:
+   - `[HTTP][REQ] METHOD URL`
+   - `[HTTP][RES] METHOD URL -> STATUS (Nms)`
+   - `[HTTP][ERR] ...` (si falla)
+5. Verificar logs backend desde `Sofkify_BE`:
 
-Toda historia pasa por validación.
+```powershell
+docker compose -f docker-compose.yml -f docker-compose.integration.yml logs -f user-service product-service cart-service order-service
+```
 
-El arquitecto controla alcance, prioridad y diseño.
+## Scripts utiles
 
-La IA es soporte técnico, no autoridad del proyecto.
+- `npm run dev`: desarrollo
+- `npm run build`: build de produccion
+- `npm run lint`: lint
+- `npx vitest run`: tests unitarios
 
-## 1.3. Definición la razon de ser del aplicativo
+## Troubleshooting rapido
 
-La aplicación consiste en **MVP paraq microservicio para e-commerce de carrito**, el proposito de nuestra aplicación es hacer una aplicación AI-first que reproduce el proceso de compra para un usuario,
+- Si no ves requests, valida que las `VITE_*_API_URL` apunten a `localhost` con puertos `8080-8083`.
+- Si hay timeout, aumenta `VITE_HTTP_TIMEOUT_MS`.
+- Si aparece error CORS, valida que los servicios backend hayan levantado correctamente.

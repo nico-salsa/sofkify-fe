@@ -7,7 +7,7 @@ export interface UseLogoutReturn {
 
 export function useLogout(): UseLogoutReturn {
   const logout = useCallback((): void => {
-    authStorage.clearUserEmail();
+    authStorage.clearSession();
   }, []);
 
   return {

@@ -1,19 +1,15 @@
-import React from 'react';
+﻿import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCart } from '../../hooks/useCart';
 import Swal from 'sweetalert2';
 
 /**
- * Renders the cart view with real data from useCart hook.
- * Displays items, total amount, total quantity, and checkout functionality.
+ * Cart page rendered from local cart state.
  */
 const Cart: React.FC = () => {
   const navigate = useNavigate();
   const { items, total, totalQuantity, removeItem, updateQuantity } = useCart();
   const [isLoading, setIsLoading] = React.useState(false);
-
-  console.log('[Cart] Items en el carrito:', items);
-  console.log('[Cart] Total:', total, 'TotalQuantity:', totalQuantity);
 
   const handleRemoveItem = (productId: string) => {
     removeItem(productId);
@@ -41,7 +37,7 @@ const Cart: React.FC = () => {
     if (items.length === 0) {
       await Swal.fire({
         icon: 'warning',
-        title: 'Carrito vacío',
+        title: 'Carrito vacio',
         text: 'Agrega productos antes de proceder al pago',
       });
       return;
@@ -49,13 +45,7 @@ const Cart: React.FC = () => {
 
     setIsLoading(true);
     try {
-      // TODO: Implementar lógica de checkout/payment
-      await Swal.fire({
-        icon: 'success',
-        title: '¡Orden creada!',
-        text: 'Tu compra ha sido procesada correctamente',
-      });
-      navigate('/order-success');
+      navigate('/cart/confirmation');
     } catch (err) {
       const error = err instanceof Error ? err : new Error('Something went wrong');
       await Swal.fire({
@@ -70,11 +60,11 @@ const Cart: React.FC = () => {
 
   return (
     <div className="w-11/12 mx-auto max-w-4xl py-8">
-      <h1 className="text-4xl font-bold mb-8 text-center">🛒 Carrito de Compras</h1>
+      <h1 className="text-4xl font-bold mb-8 text-center">Carrito de Compras</h1>
 
       {items.length === 0 ? (
         <div className="text-center py-12">
-          <p className="text-xl text-gray-500 mb-4">Tu carrito está vacío</p>
+          <p className="text-xl text-gray-500 mb-4">Tu carrito esta vacio</p>
           <button
             onClick={() => navigate('/product')}
             className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded"
@@ -84,7 +74,6 @@ const Cart: React.FC = () => {
         </div>
       ) : (
         <>
-          {/* Cart Items */}
           <div className="bg-white rounded-lg shadow-md p-6 mb-6">
             <div className="space-y-4">
               {items.map((item) => (
@@ -92,7 +81,6 @@ const Cart: React.FC = () => {
                   key={item.id}
                   className="flex items-center gap-4 p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition"
                 >
-                  {/* Product Image */}
                   <div className="w-24 h-24 flex-shrink-0">
                     <img
                       src={item.image}
@@ -101,21 +89,19 @@ const Cart: React.FC = () => {
                     />
                   </div>
 
-                  {/* Product Info */}
                   <div className="flex-1 min-w-0">
                     <h3 className="text-lg font-semibold text-gray-900">{item.name}</h3>
                     <p className="text-gray-600 text-sm line-clamp-2">{item.description}</p>
                     <p className="text-blue-600 font-bold mt-2">${item.price.toFixed(2)}</p>
                   </div>
 
-                  {/* Quantity Controls */}
                   <div className="flex items-center gap-2 bg-gray-100 rounded-lg p-2">
                     <button
                       onClick={() => handleDecreaseQuantity(item.id, item.quantity)}
                       className="px-3 py-1 text-red-600 hover:bg-red-100 rounded font-bold"
                       title="Disminuir cantidad"
                     >
-                      −
+                      -
                     </button>
                     <span className="px-4 py-1 font-semibold text-gray-900">{item.quantity}</span>
                     <button
@@ -127,7 +113,6 @@ const Cart: React.FC = () => {
                     </button>
                   </div>
 
-                  {/* Subtotal */}
                   <div className="text-right min-w-max">
                     <p className="text-gray-600 text-sm">Subtotal:</p>
                     <p className="text-lg font-bold text-gray-900">
@@ -135,20 +120,18 @@ const Cart: React.FC = () => {
                     </p>
                   </div>
 
-                  {/* Remove Button */}
                   <button
                     onClick={() => handleRemoveItem(item.id)}
                     className="px-4 py-2 ml-2 bg-red-500 hover:bg-red-600 text-white rounded font-semibold transition"
                     title="Eliminar del carrito"
                   >
-                    🗑️ Eliminar
+                    Eliminar
                   </button>
                 </div>
               ))}
             </div>
           </div>
 
-          {/* Summary */}
           <div className="bg-gray-50 rounded-lg p-6 mb-6">
             <div className="space-y-3">
               <div className="flex justify-between text-gray-700">
@@ -162,21 +145,20 @@ const Cart: React.FC = () => {
             </div>
           </div>
 
-          {/* Action Buttons */}
           <div className="flex gap-4 justify-end">
             <button
               onClick={() => navigate('/product')}
               className="px-6 py-3 bg-gray-600 hover:bg-gray-700 text-white font-bold rounded transition"
               disabled={isLoading}
             >
-              ← Continuar Comprando
+              Continuar Comprando
             </button>
             <button
               onClick={handleCheckout}
               className="px-6 py-3 bg-green-600 hover:bg-green-700 text-white font-bold rounded transition disabled:opacity-50"
               disabled={isLoading || items.length === 0}
             >
-              {isLoading ? 'Procesando...' : '💳 Ir a Pagar'}
+              {isLoading ? 'Procesando...' : 'Ir a Confirmar'}
             </button>
           </div>
         </>

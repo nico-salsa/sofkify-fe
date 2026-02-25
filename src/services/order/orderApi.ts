@@ -1,338 +1,109 @@
 /**
  * Order API Service
- * Comunicación HTTP con Order Service (puerto 8082, sin contexto /api)
- * 
- * Responsabilidad ÚNICA: Comunicación HTTP con backend para órdenes
- * - POST /orders/from-cart/{cartId} - Crear orden desde carrito
- * - GET /orders/{orderId} - Obtener orden por ID
- * - GET /orders/customer/{customerId} - Listar órdenes del cliente
- * - PUT /orders/{orderId}/status - Actualizar estado de la orden
  */
 
-import type { CreateOrderRequest, Order, OrderError } from '../../types/order.types';
-import { authStorage } from '../auth/authStorage';
+import type { Order, OrderError, OrderStatus } from '../../types/order.types';
+import { API_CONFIG } from '../api/config';
+import { HttpError, httpRequest } from '../http/httpClient';
 
-const ORDER_SERVICE_URL = import.meta.env.VITE_ORDER_SERVICE_URL || 'http://localhost:8082';
-const ORDER_API_ENDPOINT = `${ORDER_SERVICE_URL}/orders`;
+interface BackendOrderItem {
+  id: string;
+  productId: string;
+  productName: string;
+  unitPrice: number;
+  quantity: number;
+  subtotal: number;
+  createdAt: string;
+}
 
-/**
- * orderApi - Cliente HTTP para operaciones de órdenes
- */
+interface BackendOrderResponse {
+  id: string;
+  cartId: string;
+  customerId: string;
+  status: string;
+  items: BackendOrderItem[];
+  totalAmount: number;
+  createdAt: string;
+}
+
+const normalizeStatus = (status: string): OrderStatus => {
+  const value = status.toLowerCase();
+  if (value === 'pending' || value === 'confirmed' || value === 'shipped' || value === 'delivered' || value === 'cancelled' || value === 'failed') {
+    return value;
+  }
+  return 'pending';
+};
+
+const mapBackendOrder = (backendOrder: BackendOrderResponse): Order => {
+  return {
+    id: backendOrder.id,
+    cartId: backendOrder.cartId,
+    customerId: backendOrder.customerId,
+    status: normalizeStatus(backendOrder.status),
+    items: backendOrder.items.map((item) => ({
+      id: item.id,
+      productId: item.productId,
+      productName: item.productName,
+      quantity: item.quantity,
+      price: Number(item.unitPrice),
+      subtotal: Number(item.subtotal),
+    })),
+    total: Number(backendOrder.totalAmount),
+    createdAt: backendOrder.createdAt,
+    updatedAt: backendOrder.createdAt,
+  };
+};
+
+const toOrderError = (error: unknown): OrderError => {
+  if (error instanceof HttpError) {
+    return {
+      success: false,
+      code: `HTTP_${error.status}`,
+      message: error.message,
+      details: {
+        method: error.method,
+        url: error.url,
+      },
+    };
+  }
+
+  return {
+    success: false,
+    code: 'NETWORK_ERROR',
+    message: error instanceof Error ? error.message : 'Unknown error',
+  };
+};
+
 export const orderApi = {
-	/**
-	 * Crea una nueva orden a partir de un carrito
-	 * POST /orders/from-cart/{cartId}
-	 *
-	 * @param cartId - ID del carrito a convertir en orden
-	 * @returns Orden creada con ID y timestamps
-	 * @throws OrderError si falla
-	 */
-	async createOrderFromCart(cartId: string): Promise<Order> {
-		if (!cartId || typeof cartId !== 'string' || cartId.trim() === '') {
-			const error: OrderError = {
-				success: false,
-				code: 'INVALID_INPUT',
-				message: 'cartId must be a non-empty string',
-			};
-			throw error;
-		}
+  async createOrderFromCart(cartId: string): Promise<Order> {
+    if (!cartId || cartId.trim() === '') {
+      throw new Error('cartId must be a non-empty string');
+    }
 
-		const token = authStorage.getToken();
-		if (!token) {
-			const error: OrderError = {
-				success: false,
-				code: 'UNAUTHORIZED',
-				message: 'User not authenticated',
-			};
-			throw error;
-		}
+    try {
+      const response = await httpRequest<BackendOrderResponse>(`${API_CONFIG.ORDERS_BASE_URL}/orders/from-cart/${cartId}`, {
+        method: 'POST',
+      });
 
-		try {
-			const response = await fetch(`${ORDER_API_ENDPOINT}/from-cart/${cartId}`, {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-					'Authorization': token,
-				},
-			});
+      return mapBackendOrder(response);
+    } catch (error) {
+      throw toOrderError(error);
+    }
+  },
 
-			const data = await response.json();
+  async getOrderById(orderId: string): Promise<Order> {
+    if (!orderId || orderId.trim() === '') {
+      throw new Error('orderId must be a non-empty string');
+    }
 
-			if (!response.ok) {
-				const error: OrderError = {
-					success: false,
-					code: data.code || 'ORDER_CREATE_ERROR',
-					message: data.message || `Backend error: ${response.status}`,
-					details: data.details,
-				};
-				throw error;
-			}
+    try {
+      const response = await httpRequest<BackendOrderResponse>(`${API_CONFIG.ORDERS_BASE_URL}/orders/${orderId}`, {
+        method: 'GET',
+      });
 
-			// Validar que orden tiene campos requeridos
-			if (!data.id || !data.customerId || typeof data.total !== 'number') {
-				throw new Error('Invalid order response from server');
-			}
-
-			return data as Order;
-		} catch (err) {
-			if (err instanceof Error && 'code' in err) {
-				throw err;
-			}
-			throw {
-				success: false,
-				code: 'NETWORK_ERROR',
-				message: err instanceof Error ? err.message : 'Unknown error',
-			} as OrderError;
-		}
-	},
-
-	/**
-	 * Crea una nueva orden con detalles
-	 * POST /orders
-	 *
-	 * @param payload - Datos de la orden (customerId, items)
-	 * @returns Orden creada con ID y timestamps
-	 * @throws OrderError si falla
-	 */
-	async createOrder(payload: CreateOrderRequest): Promise<Order> {
-		// Validar que payload no contiene campos backend-managed
-		if (
-			'id' in payload ||
-			'createdAt' in payload ||
-			'updatedAt' in payload ||
-			'status' in payload
-		) {
-			throw new Error('Payload contains backend-managed fields (id, createdAt, updatedAt, status)');
-		}
-
-		const token = authStorage.getToken();
-		if (!token) {
-			const error: OrderError = {
-				success: false,
-				code: 'UNAUTHORIZED',
-				message: 'User not authenticated',
-			};
-			throw error;
-		}
-
-		try {
-			const response = await fetch(ORDER_API_ENDPOINT, {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-					'Authorization': token,
-				},
-				body: JSON.stringify(payload),
-			});
-
-			const data = await response.json();
-
-			if (!response.ok) {
-				const error: OrderError = {
-					success: false,
-					code: data.code || 'ORDER_CREATE_ERROR',
-					message: data.message || `Backend error: ${response.status}`,
-					details: data.details,
-				};
-				throw error;
-			}
-
-			// Validar que orden tiene campos requeridos
-			if (!data.id || !data.customerId || typeof data.total !== 'number') {
-				throw new Error('Invalid order response from server');
-			}
-
-			return data as Order;
-		} catch (err) {
-			if (err instanceof Error && 'code' in err) {
-				throw err;
-			}
-			throw {
-				success: false,
-				code: 'NETWORK_ERROR',
-				message: err instanceof Error ? err.message : 'Unknown error',
-			} as OrderError;
-		}
-	},
-
-	/**
-	 * Obtiene detalles de una orden por ID
-	 * GET /orders/{orderId}
-	 *
-	 * @param orderId - ID de la orden a obtener
-	 * @returns Detalles completos de la orden
-	 * @throws OrderError si no encuentra la orden
-	 */
-	async getOrderById(orderId: string): Promise<Order> {
-		if (!orderId || typeof orderId !== 'string' || orderId.trim() === '') {
-			throw new Error('orderId must be a non-empty string');
-		}
-
-		const token = authStorage.getToken();
-		if (!token) {
-			const error: OrderError = {
-				success: false,
-				code: 'UNAUTHORIZED',
-				message: 'User not authenticated',
-			};
-			throw error;
-		}
-
-		try {
-			const response = await fetch(`${ORDER_API_ENDPOINT}/${orderId}`, {
-				method: 'GET',
-				headers: {
-					'Authorization': token,
-				},
-			});
-
-			const data = await response.json();
-
-			if (response.status === 404) {
-				const error: OrderError = {
-					success: false,
-					code: 'NOT_FOUND',
-					message: `Order ${orderId} not found`,
-				};
-				throw error;
-			}
-
-			if (!response.ok) {
-				const error: OrderError = {
-					success: false,
-					code: data.code || 'ORDER_FETCH_ERROR',
-					message: data.message || `Backend error: ${response.status}`,
-				};
-				throw error;
-			}
-
-			return data as Order;
-		} catch (err) {
-			if (err instanceof Error && 'code' in err) {
-				throw err;
-			}
-			throw {
-				success: false,
-				code: 'NETWORK_ERROR',
-				message: err instanceof Error ? err.message : 'Unknown error',
-			} as OrderError;
-		}
-	},
-
-	/**
-	 * Lista todas las órdenes de un cliente
-	 * GET /orders/customer/{customerId}
-	 *
-	 * @param customerId - ID del cliente
-	 * @returns Array de órdenes del cliente
-	 * @throws OrderError si no puede obtener las órdenes
-	 */
-	async getOrdersByCustomer(customerId: string): Promise<Order[]> {
-		if (!customerId || typeof customerId !== 'string' || customerId.trim() === '') {
-			throw new Error('customerId must be a non-empty string');
-		}
-
-		const token = authStorage.getToken();
-		if (!token) {
-			const error: OrderError = {
-				success: false,
-				code: 'UNAUTHORIZED',
-				message: 'User not authenticated',
-			};
-			throw error;
-		}
-
-		try {
-			const response = await fetch(`${ORDER_API_ENDPOINT}/customer/${customerId}`, {
-				method: 'GET',
-				headers: {
-					'Authorization': token,
-				},
-			});
-
-			const data = await response.json();
-
-			if (!response.ok) {
-				const error: OrderError = {
-					success: false,
-					code: data.code || 'ORDER_FETCH_ERROR',
-					message: data.message || `Backend error: ${response.status}`,
-				};
-				throw error;
-			}
-
-			return (Array.isArray(data) ? data : data.orders || []) as Order[];
-		} catch (err) {
-			if (err instanceof Error && 'code' in err) {
-				throw err;
-			}
-			throw {
-				success: false,
-				code: 'NETWORK_ERROR',
-				message: err instanceof Error ? err.message : 'Unknown error',
-			} as OrderError;
-		}
-	},
-
-	/**
-	 * Actualiza el estado de una orden
-	 * PUT /orders/{orderId}/status
-	 *
-	 * @param orderId - ID de la orden
-	 * @param status - Nuevo estado
-	 * @returns Orden actualizada
-	 * @throws OrderError si falla
-	 */
-	async updateOrderStatus(orderId: string, status: string): Promise<Order> {
-		if (!orderId || typeof orderId !== 'string' || orderId.trim() === '') {
-			throw new Error('orderId must be a non-empty string');
-		}
-
-		if (!status || typeof status !== 'string' || status.trim() === '') {
-			throw new Error('status must be a non-empty string');
-		}
-
-		const token = authStorage.getToken();
-		if (!token) {
-			const error: OrderError = {
-				success: false,
-				code: 'UNAUTHORIZED',
-				message: 'User not authenticated',
-			};
-			throw error;
-		}
-
-		try {
-			const response = await fetch(`${ORDER_API_ENDPOINT}/${orderId}/status`, {
-				method: 'PUT',
-				headers: {
-					'Content-Type': 'application/json',
-					'Authorization': token,
-				},
-				body: JSON.stringify({ status }),
-			});
-
-			const data = await response.json();
-
-			if (!response.ok) {
-				const error: OrderError = {
-					success: false,
-					code: data.code || 'ORDER_UPDATE_ERROR',
-					message: data.message || `Backend error: ${response.status}`,
-				};
-				throw error;
-			}
-
-			return data as Order;
-		} catch (err) {
-			if (err instanceof Error && 'code' in err) {
-				throw err;
-			}
-			throw {
-				success: false,
-				code: 'NETWORK_ERROR',
-				message: err instanceof Error ? err.message : 'Unknown error',
-			} as OrderError;
-		}
-	},
+      return mapBackendOrder(response);
+    } catch (error) {
+      throw toOrderError(error);
+    }
+  },
 };

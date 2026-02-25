@@ -20,10 +20,18 @@ export function useLogin(): UseLoginReturn {
         setError(null);
         try {
             validateLoginCredentials(credentials);
-            // Usar servicio authApi
-            await authApi.login(credentials);
-            // Usar servicio authStorage
-            authStorage.saveUserEmail(credentials.email);
+            const response = await authApi.login(credentials);
+
+            if (!response.success || !response.userId) {
+                throw new Error(response.message || 'Credenciales inválidas');
+            }
+
+            authStorage.saveSession({
+                id: response.userId,
+                email: response.email ?? credentials.email,
+                name: response.name,
+                role: response.role,
+            });
             setLoading(false);
         } catch (err) {
             const errorMessage = err instanceof Error ? err.message : 'Error desconocido en login';

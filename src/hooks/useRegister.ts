@@ -20,10 +20,13 @@ export function useRegister(): UseRegisterReturn {
     setError(null);
     try {
       validateUserData(data);
-      // Usar servicio authApi
-      await authApi.register(data);
-      // Usar servicio authStorage
-      authStorage.saveUserEmail(data.email);
+      const response = await authApi.register(data);
+      authStorage.saveSession({
+        id: response.id,
+        email: response.email,
+        name: response.name,
+        role: response.role,
+      });
       setLoading(false);
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Error desconocido en registro';
