@@ -52,7 +52,25 @@ const toCartError = (error: unknown): CartConfirmationError => {
       };
     }
 
-    if (error.status === 400 || error.status === 409) {
+    if (error.status === 400) {
+      // Verificar si es un error de carrito ya confirmado
+      const message = error.message.toLowerCase();
+      if (message.includes('already confirmed') || message.includes('ya confirmado')) {
+        return {
+          success: false,
+          code: 'CART_ALREADY_CONFIRMED',
+          message: 'Cart is already confirmed',
+        };
+      }
+      
+      return {
+        success: false,
+        code: 'STOCK_ERROR',
+        message: error.message,
+      };
+    }
+
+    if (error.status === 409) {
       return {
         success: false,
         code: 'STOCK_ERROR',
