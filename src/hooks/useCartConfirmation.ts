@@ -51,15 +51,20 @@ export const useCartConfirmation = (): UseCartConfirmationReturn => {
           } as CartConfirmationError;
         }
 
-        // Get the active cart from backend (items already added via addItem calls)
-        const backendCart = await cartApi.getActiveCart(userId);
-        const backendCartId = backendCart.id;
+        // Ensure a backend cart exists with all items.
+        // addItem is idempotent: existing products increment quantity,
+        // and the backend creates a new ACTIVE cart if none exists.
+        let backendCartId = '';
+        for (const item of items) {
+          const cartResponse = await cartApi.addItem(userId, item.productId, item.quantity);
+          backendCartId = cartResponse.id;
+        }
 
         if (!backendCartId) {
           throw {
             success: false,
             code: 'EMPTY_CART',
-            message: 'Backend cart could not be retrieved',
+            message: 'Backend cart could not be created',
           } as CartConfirmationError;
         }
 

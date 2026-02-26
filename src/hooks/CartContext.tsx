@@ -64,21 +64,8 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
 
   const addItem = async (item: CartItem) => {
     try {
-      const user = authStorage.getSession();
-
-      // Intentar agregar al API si hay usuario autenticado
-      if (user?.id) {
-        try {
-          console.log('[CartContext] Adding item to API:', item);
-          const cartResponse = await cartApi.addItem(user.id, item.id, item.quantity);
-          setBackendCartId(cartResponse.id); // Save backend cart ID
-          console.log('[CartContext] Item added to API successfully, cartId:', cartResponse.id);
-        } catch (apiErr) {
-          console.warn('[CartContext] Failed to add item to API, using local only:', apiErr);
-        }
-      }
-
-      // Actualizar estado local en cualquier caso
+      // Items are stored locally only. Backend sync happens atomically
+      // in useCartConfirmation.confirmCart() to avoid double-quantity issues.
       setItems((prevItems) => {
         const existingItem = prevItems.find((i) => i.id === item.id);
         if (existingItem) {
