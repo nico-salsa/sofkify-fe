@@ -2,7 +2,7 @@
  * Cart Confirmation Page
  */
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth.ts';
 import { useCart } from '../../hooks/useCart';
@@ -23,6 +23,8 @@ const CartConfirmationPage: React.FC = () => {
   } = useCart();
   const { isLoading, error, data, confirmCart } = useCartConfirmation();
   const [localError, setLocalError] = useState<string | null>(null);
+  const [isConfirmed, setIsConfirmed] = useState(false);
+  const hasNavigated = useRef(false);
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -31,11 +33,23 @@ const CartConfirmationPage: React.FC = () => {
   }, [isAuthenticated, navigate]);
 
   useEffect(() => {
-    if (data?.order?.id) {
-      clearCart();
-      navigate(`/order-success/${data.order.id}`);
+    if (data?.order?.id && !hasNavigated.current) {
+      hasNavigated.current = true;
+      console.log('[CartConfirmationPage] Order created successfully, navigating to success page');
+      setIsConfirmed(true);
+      
+      const orderId = data.order.id;
+      
+      // Navegar inmediatamente sin esperar
+      navigate(`/order-success/${orderId}`, { replace: true });
+      
+      // Limpiar el carrito después de navegar
+      setTimeout(() => {
+        clearCart();
+        localStorage.removeItem('cart');
+      }, 100);
     }
-  }, [clearCart, data?.order?.id, navigate]);
+  }, [data?.order?.id, navigate, clearCart]);
 
   const handleConfirmClick = async () => {
     setLocalError(null);
@@ -70,7 +84,7 @@ const CartConfirmationPage: React.FC = () => {
     }
   };
 
-  const isConfirmDisabled = cartItems.length === 0 || isLoading;
+  const isConfirmDisabled = cartItems.length === 0 || isLoading || isConfirmed;
 
   return (
     <div className="w-11/12 mx-auto max-w-286 py-8">
