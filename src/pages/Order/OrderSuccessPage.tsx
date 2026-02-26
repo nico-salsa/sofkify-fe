@@ -194,9 +194,13 @@ const OrderSuccessPage: React.FC = () => {
 
 				{/* Info box */}
 				<div className="bg-blue-50 border border-blue-200 rounded-lg p-4 text-sm text-gray-700">
-					<p>
+					<p className="mb-2">
 						<strong>📧 Confirmación:</strong> Se ha enviado una confirmación a tu correo
 						electrónico.
+					</p>
+					<p>
+						<strong>🚚 Seguimiento:</strong> Podrás seguir el estado de tu orden en
+						"Mis Órdenes".
 					</p>
 				</div>
 			</div>
@@ -208,6 +212,13 @@ const OrderSuccessPage: React.FC = () => {
 					className="w-full px-6 py-3 bg-blue-600 text-white rounded font-semibold hover:bg-blue-700 transition"
 				>
 					🛍️ Continuar Comprando
+				</button>
+
+				<button
+					onClick={() => navigate('/my-orders')}
+					className="w-full px-6 py-3 bg-gray-200 text-gray-800 rounded font-semibold hover:bg-gray-300 transition"
+				>
+					📦 Ver Mis Órdenes
 				</button>
 			</div>
 
