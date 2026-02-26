@@ -32,10 +32,15 @@ const CartConfirmationPage: React.FC = () => {
 
   useEffect(() => {
     if (data?.order?.id) {
-      clearCart();
-      navigate(`/order-success/${data.order.id}`);
+      // Navigate first, then clear cart
+      const orderId = data.order.id;
+      navigate(`/order-success/${orderId}`, { replace: true });
+      // Clear cart after a short delay to ensure navigation completes
+      setTimeout(() => {
+        clearCart();
+      }, 100);
     }
-  }, [clearCart, data?.order?.id, navigate]);
+  }, [data?.order?.id, navigate, clearCart]);
 
   const handleConfirmClick = async () => {
     setLocalError(null);
@@ -76,11 +81,11 @@ const CartConfirmationPage: React.FC = () => {
     <div className="w-11/12 mx-auto max-w-286 py-8">
       <h1 className="text-3xl font-bold mb-6 text-center text-gray-800">Carrito de Compras</h1>
 
-      {cartItems.length === 0 && (
+      {cartItems.length === 0 && !isLoading && !data && (
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-8 text-center">
           <p className="text-gray-600 text-lg mb-4">Tu carrito esta vacio</p>
           <button
-            onClick={() => navigate('/')}
+            onClick={() => navigate('/', { replace: true })}
             className="px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
           >
             Volver a Tienda
