@@ -106,4 +106,20 @@ export const orderApi = {
       throw toOrderError(error);
     }
   },
+
+  async getOrdersByCustomer(customerId: string): Promise<Order[]> {
+    if (!customerId || customerId.trim() === '') {
+      throw new Error('customerId must be a non-empty string');
+    }
+
+    try {
+      const response = await httpRequest<BackendOrderResponse[]>(`${API_CONFIG.ORDERS_BASE_URL}/orders/customer/${customerId}`, {
+        method: 'GET',
+      });
+
+      return response.map(mapBackendOrder);
+    } catch (error) {
+      throw toOrderError(error);
+    }
+  },
 };
