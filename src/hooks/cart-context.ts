@@ -5,6 +5,7 @@ export interface CartContextValue {
   items: CartItem[];
   total: number;
   totalQuantity: number;
+  backendCartId: string | null;
   isLoading: boolean;
   error: Error | null;
   addItem: (item: CartItem) => void;

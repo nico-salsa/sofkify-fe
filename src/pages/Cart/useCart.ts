@@ -11,9 +11,11 @@ export const useCart = () => {
 	const [cart, setCart] = useState<CartItem[]>([]);
 
 	/**
-	 * Agrega un producto al carrito o incrementa la cantidad si ya existe
-	 * @param product - Producto a agregar
-	 * @param quantity - Cantidad a agregar (default: 1)
+	 * Adds a product to cart or increments quantity if it already exists.
+	 *
+	 * @param product product selected by the user
+	 * @param quantity quantity to add, defaults to 1
+	 * @returns void
 	 */
 	const addItem = useCallback((product: Product, quantity: number = 1) => {
 		setCart((prevCart) => {
