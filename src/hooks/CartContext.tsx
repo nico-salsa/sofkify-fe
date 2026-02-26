@@ -7,6 +7,7 @@ import { authStorage } from '../services/auth/authStorage';
 
 export const CartProvider = ({ children }: { children: ReactNode }) => {
   const [items, setItems] = useState<CartItem[]>([]);
+  const [backendCartId, setBackendCartId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
@@ -63,14 +64,15 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
 
   const addItem = async (item: CartItem) => {
     try {
-      const token = authStorage.getToken();
+      const user = authStorage.getSession();
 
       // Intentar agregar al API si hay usuario autenticado
-      if (token) {
+      if (user?.id) {
         try {
           console.log('[CartContext] Adding item to API:', item);
-          await cartApi.addItemToCart(item);
-          console.log('[CartContext] Item added to API successfully');
+          const cartResponse = await cartApi.addItem(user.id, item.id, item.quantity);
+          setBackendCartId(cartResponse.id); // Save backend cart ID
+          console.log('[CartContext] Item added to API successfully, cartId:', cartResponse.id);
         } catch (apiErr) {
           console.warn('[CartContext] Failed to add item to API, using local only:', apiErr);
         }
@@ -155,12 +157,13 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
 
   const clearCart = () => {
     setItems([]);
+    setBackendCartId(null); // Reset backend cart ID
     localStorage.removeItem('cart');
   };
 
   return (
     <CartContext.Provider
-      value={{ items, total, totalQuantity, isLoading, error, addItem, removeItem, updateQuantity, clearCart }}
+      value={{ items, total, totalQuantity, backendCartId, isLoading, error, addItem, removeItem, updateQuantity, clearCart }}
     >
       {children}
     </CartContext.Provider>

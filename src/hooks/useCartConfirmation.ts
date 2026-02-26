@@ -51,19 +51,15 @@ export const useCartConfirmation = (): UseCartConfirmationReturn => {
           } as CartConfirmationError;
         }
 
-        let backendCartId = '';
-
-        // Materializa el carrito local en backend antes de confirmar.
-        for (const item of items) {
-          const cartResponse = await cartApi.addItem(userId, item.productId, item.quantity);
-          backendCartId = cartResponse.id;
-        }
+        // Get the active cart from backend (items already added via addItem calls)
+        const backendCart = await cartApi.getActiveCart(userId);
+        const backendCartId = backendCart.id;
 
         if (!backendCartId) {
           throw {
             success: false,
             code: 'EMPTY_CART',
-            message: 'Backend cart could not be created',
+            message: 'Backend cart could not be retrieved',
           } as CartConfirmationError;
         }
 
