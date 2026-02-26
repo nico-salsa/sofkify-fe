@@ -35,7 +35,7 @@ export const useCartConfirmation = (): UseCartConfirmationReturn => {
   const confirmCart = useCallback(
     async (userId: string, items: Array<{ productId: string; quantity: number }>) => {
       if (isProcessingRef.current) {
-        console.warn('Cart confirmation already in progress');
+        console.warn('[useCartConfirmation] Cart confirmation already in progress');
         return;
       }
 
@@ -52,23 +52,75 @@ export const useCartConfirmation = (): UseCartConfirmationReturn => {
         }
 
         let backendCartId = '';
+        let shouldCreateNewCart = false;
 
-        // Materializa el carrito local en backend antes de confirmar.
-        for (const item of items) {
-          const cartResponse = await cartApi.addItem(userId, item.productId, item.quantity);
-          backendCartId = cartResponse.id;
+        // Paso 1: Intentar obtener el carrito activo existente
+        try {
+          const existingCart = await cartApi.getActiveCart(userId);
+          
+          if (existingCart && existingCart.status === 'ACTIVE') {
+            backendCartId = existingCart.id;
+            console.log('[useCartConfirmation] Using existing active cart:', backendCartId);
+            
+            // Verificar si los items del carrito backend coinciden con los locales
+            const backendItemsCount = existingCart.items?.length || 0;
+            if (backendItemsCount === 0 && items.length > 0) {
+              // El carrito backend está vacío pero el local tiene items
+              // Necesitamos agregar los items
+              shouldCreateNewCart = false;
+              console.log('[useCartConfirmation] Backend cart is empty, will add items');
+            }
+          } else if (existingCart && existingCart.status === 'CONFIRMED') {
+            // Si el carrito ya está confirmado, necesitamos crear uno nuevo
+            console.log('[useCartConfirmation] Cart is already confirmed, will create new cart');
+            shouldCreateNewCart = true;
+            backendCartId = '';
+          }
+        } catch (err: unknown) {
+          // Si no existe carrito activo (404), creamos uno nuevo
+          if (err && typeof err === 'object' && 'code' in err) {
+            const error = err as CartConfirmationError;
+            if (error.code === 'NOT_FOUND') {
+              console.log('[useCartConfirmation] No active cart found, will create new one');
+              shouldCreateNewCart = true;
+            } else {
+              throw error; // Re-lanzar otros errores
+            }
+          }
         }
 
-        if (!backendCartId) {
-          throw {
-            success: false,
-            code: 'EMPTY_CART',
-            message: 'Backend cart could not be created',
-          } as CartConfirmationError;
+        // Paso 2: Materializar el carrito local en backend
+        if (!backendCartId || shouldCreateNewCart) {
+          console.log('[useCartConfirmation] Creating/updating cart with items');
+          for (const item of items) {
+            try {
+              const cartResponse = await cartApi.addItem(userId, item.productId, item.quantity);
+              backendCartId = cartResponse.id;
+            } catch (addItemError) {
+              console.error('[useCartConfirmation] Error adding item:', addItemError);
+              throw addItemError;
+            }
+          }
+
+          if (!backendCartId) {
+            throw {
+              success: false,
+              code: 'EMPTY_CART',
+              message: 'Backend cart could not be created',
+            } as CartConfirmationError;
+          }
+          console.log('[useCartConfirmation] Cart created/updated:', backendCartId);
         }
 
+        // Paso 3: Confirmar el carrito
+        console.log('[useCartConfirmation] Confirming cart:', backendCartId);
         const confirmResponse = await cartApi.confirmCart(backendCartId, userId);
+        console.log('[useCartConfirmation] Cart confirmed:', confirmResponse);
+
+        // Paso 4: Crear la orden desde el carrito confirmado
+        console.log('[useCartConfirmation] Creating order from cart:', backendCartId);
         const orderResponse = await orderApi.createOrderFromCart(backendCartId);
+        console.log('[useCartConfirmation] Order created:', orderResponse.id);
 
         setState({
           isLoading: false,
