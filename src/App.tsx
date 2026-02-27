@@ -9,6 +9,7 @@ import { CartProvider } from './hooks/CartContext';
 import Cart from './pages/Cart/Cart';
 import CartConfirmationPage from './pages/Cart/CartConfirmationPage';
 import OrderSuccessPage from './pages/Order/OrderSuccessPage';
+import MyOrdersPage from './pages/Order/MyOrdersPage';
 import BurguerButton from './components/BurguerButton/BurguerButton';
 import AsideHeader from './components/AsideHeader/AsideHeader';
 
@@ -43,6 +44,7 @@ const App = () => {
           <Route path="/cart" element={<Cart />} />
           <Route path="/cart/confirmation" element={<CartConfirmationPage />} />
           <Route path="/order-success/:orderId" element={<OrderSuccessPage />} />
+          <Route path="/my-orders" element={<MyOrdersPage />} />
         </Routes>
       </Router>
     </CartProvider>
